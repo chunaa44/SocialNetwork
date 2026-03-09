@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../SocialPlatformLibrary/SocialPlatformLibrary.csproj" Id="fb220edf-0aa3-4429-953b-4ceb3dc20fee" />
+  <Project Path="SocialNetworkingPlatform.csproj" />
+</Solution>
