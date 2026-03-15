@@ -5,9 +5,9 @@ namespace SocialNetworkingPlatform.Interfaces;
 
 public interface IReelRepo
 {
-    Reel CreateReel(ReelDTO reel);
-    bool RemoveReelById(Guid id);
-    Reel UpdateReelById(Guid id, string newContent);
-    Reel GetReelById(Guid id);
-    List<Reel> GetAllReels();
+    public Reel CreateReel(ReelDTO reel);
+    public bool RemoveReelById(Guid id);
+    public Reel UpdateReelById(Guid id, string newContent);
+    public Reel GetReelById(Guid id);
+    public List<Reel> GetAllReels();
 }

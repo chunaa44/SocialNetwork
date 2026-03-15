@@ -1,8 +1,7 @@
 ﻿using SocialNetworkingPlatform.DTO;
 using SocialNetworkingPlatform.Interfaces;
 using SocialNetworkingPlatform.Posts;
-using System.Linq;
-using SocialNetworkingPlatform.Posts;
+
 
 namespace SocialNetworkingPlatform.Repositories;
 

@@ -1,6 +1,9 @@
-﻿using SocialNetworkingPlatform.DTO;
-using SocialNetworkingPlatform.Interfaces;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using SocialNetworkingPlatform;
+using SocialNetworkingPlatform.DTO;
+using SocialNetworkingPlatform.Interfaces;
 
 namespace SocialNetworkingPlatform.Repositories;
 
@@ -48,5 +51,63 @@ public class UserRepoMemory : IUserRepo
         user.Email = email;
 
         return user;
+    }
+
+    public bool FollowUser(Guid followerId, Guid followeeId)
+    {
+        if (followerId == Guid.Empty || followeeId == Guid.Empty)
+            return false;
+
+        if (followerId == followeeId)
+            return false;
+
+        var follower = GetUserById(followerId);
+        var followee = GetUserById(followeeId);
+
+        if (follower == null || followee == null)
+            return false;
+
+        bool addedToFollowing = follower.Following.Add(followeeId);
+        bool addedToFollowers = followee.Followers.Add(followerId);
+
+        return addedToFollowing || addedToFollowers;
+    }
+
+    public bool UnfollowUser(Guid followerId, Guid followeeId)
+    {
+        if (followerId == Guid.Empty || followeeId == Guid.Empty)
+            return false;
+
+        if (followerId == followeeId)
+            return false;
+
+        var follower = GetUserById(followerId);
+        var followee = GetUserById(followeeId);
+
+        if (follower == null || followee == null)
+            return false;
+
+        bool removedFromFollowing = follower.Following.Remove(followeeId);
+        bool removedFromFollowers = followee.Followers.Remove(followerId);
+
+        return removedFromFollowing || removedFromFollowers;
+    }
+
+    public List<User> GetFollowers(Guid userId)
+    {
+        var user = GetUserById(userId);
+        if (user == null)
+            return new List<User>();
+
+        return users.Where(u => user.Followers.Contains(u.Id)).ToList();
+    }
+
+    public List<User> GetFollowing(Guid userId)
+    {
+        var user = GetUserById(userId);
+        if (user == null)
+            return new List<User>();
+
+        return users.Where(u => user.Following.Contains(u.Id)).ToList();
     }
 }

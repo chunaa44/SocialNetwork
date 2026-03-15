@@ -1,6 +1,8 @@
 ﻿using SocialNetworkingPlatform.DTO;
 using SocialNetworkingPlatform.Posts;
 using SocialNetworkingPlatform.Services;
+using System;
+using System.Collections.Generic;
 
 namespace SocialNetworkingPlatform;
 
@@ -25,43 +27,41 @@ public class Platform
         _photoService = photoService;
     }
 
-    public User CreateUser(UserDTO dto)
-    {
-        return _userService.CreateUser(dto);
-    }
+    // User operations
+    public User CreateUser(UserDTO dto) => _userService.CreateUser(dto);
 
-    public List<User> GetAllUsers()
-    {
-        return _userService.GetAllUsers();
-    }
+    public List<User> GetAllUsers() => _userService.GetAllUsers();
 
-    public Story CreateStory(StoryDTO dto)
-    {
-        return _storyService.CreateStory(dto);
-    }
+    public User GetUserById(Guid id) => _userService.GetUserById(id);
 
-    public List<Story> GetAllStories()
-    {
-        return _storyService.GetAllStories();
-    }
+    public User UpdateUserById(Guid id, string name, string email) =>
+        _userService.UpdateUserById(id, name, email);
 
-    public Reel CreateReel(ReelDTO dto)
-    {
-        return _reelService.CreateReel(dto);
-    }
+    public bool RemoveUserById(Guid id) => _userService.RemoveUserById(id);
 
-    public List<Reel> GetAllReels()
-    {
-        return _reelService.GetAllReels();
-    }
+    // Follow/unfollow convenience methods
+    public bool FollowUser(Guid followerId, Guid followeeId) =>
+        _userService.FollowUser(followerId, followeeId);
 
-    public Photo CreatePhoto(PhotoDTO dto)
-    {
-        return _photoService.CreatePhoto(dto);
-    }
+    public bool UnfollowUser(Guid followerId, Guid followeeId) =>
+        _userService.UnfollowUser(followerId, followeeId);
 
-    public List<Photo> GetAllPhotos()
-    {
-        return _photoService.GetAllPhotos();
-    }
+    public List<User> GetFollowers(Guid userId) => _userService.GetFollowers(userId);
+
+    public List<User> GetFollowing(Guid userId) => _userService.GetFollowing(userId);
+
+    // Story operations
+    public Story CreateStory(StoryDTO dto) => _storyService.CreateStory(dto);
+
+    public List<Story> GetAllStories() => _storyService.GetAllStories();
+
+    // Reel operations
+    public Reel CreateReel(ReelDTO dto) => _reelService.CreateReel(dto);
+
+    public List<Reel> GetAllReels() => _reelService.GetAllReels();
+
+    // Photo operations
+    public Photo CreatePhoto(PhotoDTO dto) => _photoService.CreatePhoto(dto);
+
+    public List<Photo> GetAllPhotos() => _photoService.GetAllPhotos();
 }

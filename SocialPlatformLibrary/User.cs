@@ -11,4 +11,6 @@ public class User
     public required string Email { get; set; }
     public required string Password { get; set; }
     public byte Age { get; init; }
+    public HashSet<Guid> Followers { get; } = new();
+    public HashSet<Guid> Following { get; } = new();
 }
