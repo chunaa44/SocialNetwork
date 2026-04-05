@@ -6,6 +6,6 @@ namespace SocialNetworkingPlatform.Interfaces;
 
 public interface ILikable
 {
-    int LikeCount { get; }
-    void Like();
+    HashSet<Guid> Likes { get; }
+    void ToggleLike(Guid userId);
 }

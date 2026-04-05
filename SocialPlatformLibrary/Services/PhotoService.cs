@@ -64,12 +64,12 @@ public class PhotoService
     }
 
     // Like a photo; throws when photo missing.
-    public void LikePhoto(Guid photoId)
+    public void LikePhoto(Guid photoId, Guid userId)
     {
         var photo = _repo.GetPhotoById(photoId);
         if (photo == null)
             throw new KeyNotFoundException($"Photo with id {photoId} not found.");
-        photo.Like();
+        photo.ToggleLike(userId);
     }
 
     public void AddComment(Guid photoId, string userName, string text)

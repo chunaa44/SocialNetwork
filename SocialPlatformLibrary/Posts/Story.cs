@@ -16,7 +16,7 @@ public class Story : Post, ILikable, IViewTrackable
 
     public int ViewCount => Viewers.Count;
 
-    public int LikeCount { get; private set; }
+    public HashSet<Guid> Likes = new HashSet<Guid>();
 
     public Story()
     {
@@ -27,11 +27,12 @@ public class Story : Post, ILikable, IViewTrackable
     public bool IsExpired => DateTime.Now > ExpiresAt;
 
     // Like a story only when active.
-    public void Like()
+    public void ToggleLike(Guid userId)
     {
         if (IsExpired)
             throw new InvalidOperationException("Cannot like an expired story.");
-        LikeCount++;
+        if (!Likes.Contains(userId)) Likes.Add(userId);
+        else Likes.Remove(userId);
     }
 
     // Add a view for a unique user; returns true when a new view was registered.

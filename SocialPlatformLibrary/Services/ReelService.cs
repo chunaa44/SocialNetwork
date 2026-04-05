@@ -61,12 +61,12 @@ public class ReelService
     }
 
     // Like a reel; throws when reel missing.
-    public void LikeReel(Guid reelId)
+    public void LikeReel(Guid reelId, Guid userId)
     {
         var reel = _repo.GetReelById(reelId);
         if (reel == null)
             throw new KeyNotFoundException($"Reel with id {reelId} not found.");
-        reel.Like();
+        reel.ToggleLike(userId);
     }
 
     // Add a comment to a reel; validates simple inputs.

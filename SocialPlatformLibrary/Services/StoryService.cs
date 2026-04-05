@@ -74,12 +74,12 @@ public class StoryService
     }
 
     // Like a story; throws when story missing or expired.
-    public void LikeStory(Guid storyId)
+    public void LikeStory(Guid storyId, Guid userId)
     {
         var story = _repo.GetStoryById(storyId);
         if (story == null)
             throw new KeyNotFoundException($"Story with id {storyId} not found.");
-        story.Like();
+        story.ToggleLike(userId);
     }
 
     // Remove all expired stories and return how many were removed.

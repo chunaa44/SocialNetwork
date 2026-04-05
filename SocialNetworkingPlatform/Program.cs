@@ -30,6 +30,7 @@ class Program
         
         instagram.FollowUser(alice.Id, bob.Id);
         instagram.FollowUser(bob.Id, alice.Id);
+        
 
         Console.WriteLine("Followers / Following:");
         Console.WriteLine($" - {alice.Name} follows: {instagram.GetFollowing(alice.Id).Count}");
@@ -37,7 +38,10 @@ class Program
 
         
         var photo = instagram.CreatePhoto(new PhotoDTO(alice, "Lovely sunset", "https://example.com/sunset.jpg"));
-        photoService.LikePhoto(photo.Id); 
+        photoService.LikePhoto(photo.Id);
+
+        photoService.AddComment(photo.Id, alice.Name, "wooow");
+        Console.WriteLine(photo.Comments[0]);
 
         Console.WriteLine($"\nPhoto by {alice.Name}: \"{photo.Content}\"");
         Console.WriteLine($"Likes: {photo.LikeCount}");
