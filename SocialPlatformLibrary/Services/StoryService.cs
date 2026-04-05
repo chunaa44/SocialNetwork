@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SocialNetworkingPlatform.DTO;
-using SocialNetworkingPlatform.Interfaces;
-using SocialNetworkingPlatform.Posts;
+using SocialPlatformLibrary.DTO;
+using SocialPlatformLibrary.Interfaces;
+using SocialPlatformLibrary.Posts;
 
-namespace SocialNetworkingPlatform.Services;
+namespace SocialPlatformLibrary.Services;
 
 public class StoryService
 {
@@ -21,9 +21,9 @@ public class StoryService
     {
         if (story == null)
             throw new ArgumentNullException(nameof(story));
-        if (story.author == null || story.author.Id == Guid.Empty)
+        if (story.Author == null || story.Author.Id == Guid.Empty)
             throw new ArgumentException("Story must have a valid author.", nameof(story));
-        if (string.IsNullOrWhiteSpace(story.content))
+        if (string.IsNullOrWhiteSpace(story.Content))
             throw new ArgumentException("Story content cannot be empty.", nameof(story));
 
         return _repo.CreateStory(story);

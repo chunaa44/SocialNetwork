@@ -1,9 +1,9 @@
-﻿using SocialNetworkingPlatform.DTO;
-using SocialNetworkingPlatform.Interfaces;
-using SocialNetworkingPlatform.Posts;
+﻿using SocialPlatformLibrary.DTO;
+using SocialPlatformLibrary.Interfaces;
+using SocialPlatformLibrary.Posts;
 
 
-namespace SocialNetworkingPlatform.Repositories;
+namespace SocialPlatformLibrary.Repositories;
 
 
 public class PhotoRepoMemory : IPhotoRepo
@@ -14,9 +14,9 @@ public class PhotoRepoMemory : IPhotoRepo
     {
         var newPhoto = new Photo()
         {
-            AuthorId = photo.author.Id,
-            Content = photo.content,
-            PhotoUrl = photo.photoUrl
+            AuthorId = photo.Author.Id,
+            Content = photo.Content,
+            PhotoUrl = photo.PhotoUrl
         };
 
         photos.Add(newPhoto);

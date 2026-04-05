@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SocialNetworkingPlatform.Interfaces;
+namespace SocialPlatformLibrary.Interfaces;
 
 public interface ILikable
 {

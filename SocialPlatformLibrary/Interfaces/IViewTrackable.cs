@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SocialNetworkingPlatform.Interfaces
+namespace SocialPlatformLibrary.Interfaces
 {
     public interface IViewTrackable
     {

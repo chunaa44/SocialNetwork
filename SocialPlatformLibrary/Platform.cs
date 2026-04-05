@@ -1,10 +1,10 @@
-﻿using SocialNetworkingPlatform.DTO;
-using SocialNetworkingPlatform.Posts;
-using SocialNetworkingPlatform.Services;
+﻿using SocialPlatformLibrary.DTO;
+using SocialPlatformLibrary.Posts;
+using SocialPlatformLibrary.Services;
 using System;
 using System.Collections.Generic;
 
-namespace SocialNetworkingPlatform;
+namespace SocialPlatformLibrary;
 
 public class Platform
 {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SocialNetworkingPlatform.Posts;
+namespace SocialPlatformLibrary.Posts;
 
 public abstract class Post 
 {

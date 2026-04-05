@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using SocialNetworkingPlatform.DTO;
-using SocialNetworkingPlatform.Interfaces;
-using SocialNetworkingPlatform.Posts;
+using SocialPlatformLibrary.DTO;
+using SocialPlatformLibrary.Interfaces;
+using SocialPlatformLibrary.Posts;
 
-namespace SocialNetworkingPlatform.Services;
+namespace SocialPlatformLibrary.Services;
 
 public class ReelService
 {
@@ -19,9 +19,9 @@ public class ReelService
     {
         if (reel == null)
             throw new ArgumentNullException(nameof(reel));
-        if (reel.author == null || reel.author.Id == Guid.Empty)
+        if (reel.Author == null || reel.Author.Id == Guid.Empty)
             throw new ArgumentException("Reel must have a valid author.", nameof(reel));
-        if (string.IsNullOrWhiteSpace(reel.content))
+        if (string.IsNullOrWhiteSpace(reel.Content))
             throw new ArgumentException("Reel content cannot be empty.", nameof(reel));
 
         return _repo.CreateReel(reel);

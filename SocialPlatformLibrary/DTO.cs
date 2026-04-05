@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SocialNetworkingPlatform.DTO;
+using SocialPlatformLibrary;
 
-public record UserDTO(string name, string email, string password);
+namespace SocialPlatformLibrary.DTO;
 
-public record ReelDTO(User author, string content);
+public record UserDTO(string Name, string Email, string Password);
 
-public record StoryDTO(User author, string content);
+public record ReelDTO(User Author, string Content);
 
-public record PhotoDTO(User author, string content, string photoUrl);
+public record StoryDTO(User Author, string Content);
+
+public record PhotoDTO(User Author, string Content, string PhotoUrl);

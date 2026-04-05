@@ -1,8 +1,7 @@
-﻿using System;
-using SocialNetworkingPlatform;
-using SocialNetworkingPlatform.DTO;
-using SocialNetworkingPlatform.Repositories;
-using SocialNetworkingPlatform.Services;
+﻿using SocialPlatformLibrary;
+using SocialPlatformLibrary.DTO;
+using SocialPlatformLibrary.Repositories;
+using SocialPlatformLibrary.Services;
 
 class Program
 {
@@ -38,12 +37,12 @@ class Program
 
         
         var photo = instagram.CreatePhoto(new PhotoDTO(alice, "Lovely sunset", "https://example.com/sunset.jpg"));
-        photoService.LikePhoto(photo.Id);
+        photoService.LikePhoto(photo.Id, bob.Id);
 
         photoService.AddComment(photo.Id, alice.Name, "wooow");
         Console.WriteLine(photo.Comments[0]);
 
         Console.WriteLine($"\nPhoto by {alice.Name}: \"{photo.Content}\"");
-        Console.WriteLine($"Likes: {photo.LikeCount}");
+        Console.WriteLine($"Likes: {photo.Likes.Count}");
     }
 }

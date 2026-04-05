@@ -1,7 +1,7 @@
-﻿using SocialNetworkingPlatform.DTO;
-using SocialNetworkingPlatform.Posts;
+﻿using SocialPlatformLibrary.DTO;
+using SocialPlatformLibrary.Posts;
 
-namespace SocialNetworkingPlatform.Interfaces;
+namespace SocialPlatformLibrary.Interfaces;
 
 public interface IReelRepo
 {

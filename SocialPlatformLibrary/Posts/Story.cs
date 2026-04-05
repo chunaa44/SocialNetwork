@@ -1,8 +1,8 @@
-﻿using SocialNetworkingPlatform.Interfaces;
+﻿using SocialPlatformLibrary.Interfaces;
 using System;
 using System.Collections.Generic;
 
-namespace SocialNetworkingPlatform.Posts;
+namespace SocialPlatformLibrary.Posts;
 
 public class Story : Post, ILikable, IViewTrackable
 {
@@ -16,7 +16,7 @@ public class Story : Post, ILikable, IViewTrackable
 
     public int ViewCount => Viewers.Count;
 
-    public HashSet<Guid> Likes = new HashSet<Guid>();
+    public HashSet<Guid> Likes { get; } = new HashSet<Guid>();
 
     public Story()
     {
@@ -25,6 +25,7 @@ public class Story : Post, ILikable, IViewTrackable
 
     // Whether story is expired (reads system clock).
     public bool IsExpired => DateTime.Now > ExpiresAt;
+
 
     // Like a story only when active.
     public void ToggleLike(Guid userId)

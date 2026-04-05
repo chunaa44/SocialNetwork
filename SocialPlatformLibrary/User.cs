@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SocialNetworkingPlatform;
+namespace SocialPlatformLibrary;
 
 public class User
 {

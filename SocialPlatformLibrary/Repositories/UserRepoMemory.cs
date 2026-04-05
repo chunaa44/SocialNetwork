@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using SocialNetworkingPlatform;
-using SocialNetworkingPlatform.DTO;
-using SocialNetworkingPlatform.Interfaces;
+using SocialPlatformLibrary;
+using SocialPlatformLibrary.DTO;
+using SocialPlatformLibrary.Interfaces;
 
-namespace SocialNetworkingPlatform.Repositories;
+namespace SocialPlatformLibrary.Repositories;
 
 public class UserRepoMemory : IUserRepo
 {
@@ -15,9 +15,9 @@ public class UserRepoMemory : IUserRepo
     {
         var newUser = new User()
         {
-            Name = user.name,
-            Email = user.email,
-            Password = user.password
+            Name = user.Name,
+            Email = user.Email,
+            Password = user.Password
         };
 
         users.Add(newUser);

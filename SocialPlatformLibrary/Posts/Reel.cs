@@ -1,9 +1,9 @@
-﻿using SocialNetworkingPlatform.Interfaces;
+﻿using SocialPlatformLibrary.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SocialNetworkingPlatform.Posts;
+namespace SocialPlatformLibrary.Posts;
 
 public class Reel: Post, ILikable, ICommentable
 {

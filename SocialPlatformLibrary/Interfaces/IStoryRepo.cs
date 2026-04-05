@@ -1,10 +1,10 @@
-﻿using SocialNetworkingPlatform.DTO;
+﻿using SocialPlatformLibrary.DTO;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using SocialNetworkingPlatform.Posts;
+using SocialPlatformLibrary.Posts;
 
-namespace SocialNetworkingPlatform.Interfaces;
+namespace SocialPlatformLibrary.Interfaces;
 
 public interface IStoryRepo
 {

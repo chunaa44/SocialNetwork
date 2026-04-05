@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using SocialNetworkingPlatform.DTO;
-using SocialNetworkingPlatform.Interfaces;
-using SocialNetworkingPlatform.Posts;
+using SocialPlatformLibrary.DTO;
+using SocialPlatformLibrary.Interfaces;
+using SocialPlatformLibrary.Posts;
 
-namespace SocialNetworkingPlatform.Services;
+namespace SocialPlatformLibrary.Services;
 
 public class UserService
 {
@@ -20,9 +20,9 @@ public class UserService
         if (user == null)
             throw new ArgumentNullException(nameof(user));
 
-        ValidateName(user.name);
-        ValidateEmail(user.email);
-        ValidatePassword(user.password);
+        ValidateName(user.Name);
+        ValidateEmail(user.Email);
+        ValidatePassword(user.Password);
 
         return _repo.CreateUser(user);
     }

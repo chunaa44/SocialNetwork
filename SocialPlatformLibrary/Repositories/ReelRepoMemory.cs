@@ -1,9 +1,9 @@
-﻿using SocialNetworkingPlatform.DTO;
-using SocialNetworkingPlatform.Interfaces;
-using SocialNetworkingPlatform.Posts;
+﻿using SocialPlatformLibrary.DTO;
+using SocialPlatformLibrary.Interfaces;
+using SocialPlatformLibrary.Posts;
 using System.Linq;
 
-namespace SocialNetworkingPlatform.Repositories;
+namespace SocialPlatformLibrary.Repositories;
 
 public class ReelRepoMemory : IReelRepo
 {
@@ -13,8 +13,8 @@ public class ReelRepoMemory : IReelRepo
     {
         var newReel = new Reel()
         {
-            AuthorId = reel.author.Id,
-            Content = reel.content
+            AuthorId = reel.Author.Id,
+            Content = reel.Content
         };
 
         reels.Add(newReel);

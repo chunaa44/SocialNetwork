@@ -1,12 +1,12 @@
-﻿using SocialNetworkingPlatform.DTO;
-using SocialNetworkingPlatform.Interfaces;
+﻿using SocialPlatformLibrary.DTO;
+using SocialPlatformLibrary.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
-using SocialNetworkingPlatform.Posts;
+using SocialPlatformLibrary.Posts;
 
-namespace SocialNetworkingPlatform.Repositories;
+namespace SocialPlatformLibrary.Repositories;
 
 public class StoryRepoMemory : IStoryRepo
 {
@@ -16,8 +16,8 @@ public class StoryRepoMemory : IStoryRepo
     {
         var newStory = new Story()
         {
-            AuthorId = story.author.Id,
-            Content = story.content
+            AuthorId = story.Author.Id,
+            Content = story.Content
         };
         stories.Add(newStory);
         return newStory;

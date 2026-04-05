@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using SocialNetworkingPlatform;
-using SocialNetworkingPlatform.DTO;
+using SocialPlatformLibrary;
+using SocialPlatformLibrary.DTO;
 
-namespace SocialNetworkingPlatform.Interfaces;
+namespace SocialPlatformLibrary.Interfaces;
 
 public interface IUserRepo
 {

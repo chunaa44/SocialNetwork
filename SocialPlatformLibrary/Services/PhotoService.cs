@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using SocialNetworkingPlatform.DTO;
-using SocialNetworkingPlatform.Interfaces;
-using SocialNetworkingPlatform.Posts;
+using SocialPlatformLibrary.DTO;
+using SocialPlatformLibrary.Interfaces;
+using SocialPlatformLibrary.Posts;
 
-namespace SocialNetworkingPlatform.Services;
+namespace SocialPlatformLibrary.Services;
 
 public class PhotoService
 {
@@ -19,11 +19,11 @@ public class PhotoService
     {
         if (photo == null)
             throw new ArgumentNullException(nameof(photo));
-        if (photo.author == null || photo.author.Id == Guid.Empty)
+        if (photo.Author == null || photo.Author.Id == Guid.Empty)
             throw new ArgumentException("Photo must have a valid author.", nameof(photo));
-        if (string.IsNullOrWhiteSpace(photo.content))
+        if (string.IsNullOrWhiteSpace(photo.Content))
             throw new ArgumentException("Photo content cannot be empty.", nameof(photo));
-        if (string.IsNullOrWhiteSpace(photo.photoUrl))
+        if (string.IsNullOrWhiteSpace(photo.PhotoUrl))
             throw new ArgumentException("Photo URL cannot be empty.", nameof(photo));
 
         return _repo.CreatePhoto(photo);
