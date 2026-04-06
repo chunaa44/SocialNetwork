@@ -6,6 +6,6 @@ namespace SocialPlatformLibrary.Interfaces;
 
 public interface IBookmarkable
 {
-    List<Guid> Bookmarks { get; }
-    void Bookmark(Guid userId);
+    HashSet<Guid> Bookmarks { get; }
+    void ToggleBookmark(Guid userId);
 }

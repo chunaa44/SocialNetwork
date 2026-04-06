@@ -1,4 +1,5 @@
-﻿using SocialPlatformLibrary.Interfaces;
+﻿using SocialPlatformLibrary.DTO;
+using SocialPlatformLibrary.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,7 +9,7 @@ namespace SocialPlatformLibrary.Posts;
 public class Reel: Post, ILikable, ICommentable
 {
     public HashSet<Guid> Likes { get; } = new HashSet<Guid>();
-    public List<string> Comments { get; } = new List<string>();
+    public List<Comment> Comments { get; } = new List<Comment>();
 
     public void ToggleLike(Guid userId)
     {
@@ -16,8 +17,17 @@ public class Reel: Post, ILikable, ICommentable
         else Likes.Remove(userId);
     }
 
-    public void AddComment(string userName, string text)
+    public void AddComment(Comment comment)
     {
-        Comments.Add($"[{userName}]: {text}");
+        Comments.Add(comment);
+    }
+
+    public void RemoveCommentById(Guid commentId)
+    {
+        var comment = Comments.FirstOrDefault(c => c.Id == commentId);
+        if(comment != null)
+        {
+            Comments.Remove(comment);
+        }
     }
 }

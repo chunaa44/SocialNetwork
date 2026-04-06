@@ -13,18 +13,21 @@ public class Platform
     private readonly StoryService _storyService;
     private readonly ReelService _reelService;
     private readonly PhotoService _photoService;
+    private readonly CommentService _commentService;
 
     // Platform constructor with dependency injection
     public Platform(
         UserService userService,
         StoryService storyService,
         ReelService reelService,
-        PhotoService photoService)
+        PhotoService photoService,
+        CommentService commentService)
     {
         _userService = userService;
         _storyService = storyService;
         _reelService = reelService;
         _photoService = photoService;
+        _commentService = commentService;
     }
 
     // User operations

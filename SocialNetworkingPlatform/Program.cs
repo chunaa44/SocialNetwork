@@ -1,4 +1,5 @@
 ﻿using SocialPlatformLibrary;
+using SocialPlatformLibrary.Posts;
 using SocialPlatformLibrary.DTO;
 using SocialPlatformLibrary.Repositories;
 using SocialPlatformLibrary.Services;
@@ -12,15 +13,17 @@ class Program
         var photoRepo = new PhotoRepoMemory();
         var storyRepo = new StoryRepoMemory();
         var reelRepo = new ReelRepoMemory();
+        var commentRepo = new CommentRepoMemory();
 
         // services
         var userService = new UserService(userRepo);
         var photoService = new PhotoService(photoRepo);
         var storyService = new StoryService(storyRepo);
         var reelService = new ReelService(reelRepo);
+        var commentService = new CommentService(commentRepo);
 
         
-        var instagram = new Platform(userService, storyService, reelService, photoService);
+        var instagram = new Platform(userService, storyService, reelService, photoService, commentService);
 
         
         var alice = instagram.CreateUser(new UserDTO("Alice", "alice@example.com", "password123"));
@@ -37,10 +40,21 @@ class Program
 
         
         var photo = instagram.CreatePhoto(new PhotoDTO(alice, "Lovely sunset", "https://example.com/sunset.jpg"));
-        photoService.LikePhoto(photo.Id, bob.Id);
+        photoService.ToggleLikePhoto(photo.Id, bob.Id);
 
-        photoService.AddComment(photo.Id, alice.Name, "wooow");
-        Console.WriteLine(photo.Comments[0]);
+        var comment = commentService.CreateComment(new CommentDTO(bob, "woow", photo.Id), photo);
+        var authorComment = userService.GetUserById(comment.AuthorId);
+        Console.WriteLine($"{authorComment.Name}: {comment.Content}");
+
+        List<Photo> photos = photoService.GetAllPhotos();
+        Console.WriteLine(photos.Count);
+
+        photoService.RemovePhotoById(photo.Id);
+        photos = photoService.GetAllPhotos();
+        Console.WriteLine(photos.Count);
+
+        //commentService.RemoveCommentById(comment.Id, photo);
+
 
         Console.WriteLine($"\nPhoto by {alice.Name}: \"{photo.Content}\"");
         Console.WriteLine($"Likes: {photo.Likes.Count}");

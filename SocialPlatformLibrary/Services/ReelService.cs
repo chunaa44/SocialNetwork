@@ -61,7 +61,7 @@ public class ReelService
     }
 
     // Like a reel; throws when reel missing.
-    public void LikeReel(Guid reelId, Guid userId)
+    public void ToggleLikeReel(Guid reelId, Guid userId)
     {
         var reel = _repo.GetReelById(reelId);
         if (reel == null)
@@ -69,18 +69,4 @@ public class ReelService
         reel.ToggleLike(userId);
     }
 
-    // Add a comment to a reel; validates simple inputs.
-    public void AddComment(Guid reelId, string userName, string text)
-    {
-        var reel = _repo.GetReelById(reelId);
-        if (reel == null)
-            throw new KeyNotFoundException($"Reel with id {reelId} not found.");
-
-        if (string.IsNullOrWhiteSpace(userName))
-            throw new ArgumentException("User name is required.", nameof(userName));
-        if (string.IsNullOrWhiteSpace(text))
-            throw new ArgumentException("Comment text is required.", nameof(text));
-
-        reel.AddComment(userName, text);
-    }
 }

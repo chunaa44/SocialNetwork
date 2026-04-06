@@ -74,7 +74,7 @@ public class StoryService
     }
 
     // Like a story; throws when story missing or expired.
-    public void LikeStory(Guid storyId, Guid userId)
+    public void ToggleLikeStory(Guid storyId, Guid userId)
     {
         var story = _repo.GetStoryById(storyId);
         if (story == null)

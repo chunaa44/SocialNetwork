@@ -1,4 +1,5 @@
-﻿using SocialPlatformLibrary.Interfaces;
+﻿using SocialPlatformLibrary.DTO;
+using SocialPlatformLibrary.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,8 +11,8 @@ public class Photo: Post, ILikable, ICommentable, IBookmarkable
     public required string PhotoUrl { get; set; }
 
     public HashSet<Guid> Likes { get; } = new HashSet<Guid>();
-    public List<string> Comments { get; } = new List<string>();
-    public List<Guid> Bookmarks { get; } = new List<Guid>();
+    public List<Comment> Comments { get; } = new List<Comment>();
+    public HashSet<Guid> Bookmarks { get; } = new HashSet<Guid>();
 
     // Records like if not liked before
     // remove like if liked before
@@ -21,13 +22,23 @@ public class Photo: Post, ILikable, ICommentable, IBookmarkable
         else Likes.Remove(userId);
     }
 
-    public void AddComment(string userName, string text)
-    {
-        Comments.Add($"[{userName}]: {text}");
+    public void AddComment(Comment comment)
+    { 
+        Comments.Add(comment);
     }
 
-    public void Bookmark(Guid userId)
+    public void RemoveCommentById(Guid commentId)
+    {
+        var comment = Comments.FirstOrDefault(c => c.Id == commentId);
+        if(comment != null)
+        {
+            Comments.Remove(comment);
+        }
+    }
+
+    public void ToggleBookmark(Guid userId)
     {
         if (!Bookmarks.Contains(userId)) Bookmarks.Add(userId);
+        else Bookmarks.Remove(userId);
     }
 }

@@ -13,3 +13,5 @@ public record ReelDTO(User Author, string Content);
 public record StoryDTO(User Author, string Content);
 
 public record PhotoDTO(User Author, string Content, string PhotoUrl);
+
+public record CommentDTO(User Author, string Content, Guid ParentId);

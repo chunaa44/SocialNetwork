@@ -64,7 +64,7 @@ public class PhotoService
     }
 
     // Like a photo; throws when photo missing.
-    public void LikePhoto(Guid photoId, Guid userId)
+    public void ToggleLikePhoto(Guid photoId, Guid userId)
     {
         var photo = _repo.GetPhotoById(photoId);
         if (photo == null)
@@ -72,22 +72,8 @@ public class PhotoService
         photo.ToggleLike(userId);
     }
 
-    public void AddComment(Guid photoId, string userName, string text)
-    {
-        var photo = _repo.GetPhotoById(photoId);
-        if (photo == null)
-            throw new KeyNotFoundException($"Photo with id {photoId} not found.");
-
-        if (string.IsNullOrWhiteSpace(userName))
-            throw new ArgumentException("User name is required.", nameof(userName));
-        if (string.IsNullOrWhiteSpace(text))
-            throw new ArgumentException("Comment text is required.", nameof(text));
-
-        photo.AddComment(userName, text);
-    }
-
     // Bookmark a photo for a user.
-    public void BookmarkPhoto(Guid photoId, Guid userId)
+    public void ToggleBookmarkPhoto(Guid photoId, Guid userId)
     {
         var photo = _repo.GetPhotoById(photoId);
         if (photo == null)
@@ -95,6 +81,6 @@ public class PhotoService
         if (userId == Guid.Empty)
             throw new ArgumentException("User id must be provided.", nameof(userId));
 
-        photo.Bookmark(userId);
+        photo.ToggleBookmark(userId);
     }
 }
