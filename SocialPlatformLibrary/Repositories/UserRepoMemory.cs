@@ -70,7 +70,7 @@ public class UserRepoMemory : IUserRepo
         bool addedToFollowing = follower.Following.Add(followeeId);
         bool addedToFollowers = followee.Followers.Add(followerId);
 
-        return addedToFollowing || addedToFollowers;
+        return addedToFollowing && addedToFollowers;
     }
 
     public bool UnfollowUser(Guid followerId, Guid followeeId)
@@ -90,7 +90,7 @@ public class UserRepoMemory : IUserRepo
         bool removedFromFollowing = follower.Following.Remove(followeeId);
         bool removedFromFollowers = followee.Followers.Remove(followerId);
 
-        return removedFromFollowing || removedFromFollowers;
+        return removedFromFollowing && removedFromFollowers;
     }
 
     public List<User> GetFollowers(Guid userId)

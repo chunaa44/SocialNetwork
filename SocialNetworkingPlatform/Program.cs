@@ -40,20 +40,14 @@ class Program
 
         
         var photo = instagram.CreatePhoto(new PhotoDTO(alice, "Lovely sunset", "https://example.com/sunset.jpg"));
-        photoService.ToggleLikePhoto(photo.Id, bob.Id);
+        instagram.ToggleLike(photo.Id, bob.Id);
 
-        var comment = commentService.CreateComment(new CommentDTO(bob, "woow", photo.Id), photo);
-        var authorComment = userService.GetUserById(comment.AuthorId);
-        Console.WriteLine($"{authorComment.Name}: {comment.Content}");
+        var comment = instagram.CreateComment(new CommentDTO(bob, "woow", photo.Id), photo);
 
-        List<Photo> photos = photoService.GetAllPhotos();
-        Console.WriteLine(photos.Count);
 
-        photoService.RemovePhotoById(photo.Id);
-        photos = photoService.GetAllPhotos();
-        Console.WriteLine(photos.Count);
 
-        //commentService.RemoveCommentById(comment.Id, photo);
+        List<Comment> comments = instagram.GetAllComments();
+        Console.WriteLine($"comment count: {comments.Count}");
 
 
         Console.WriteLine($"\nPhoto by {alice.Name}: \"{photo.Content}\"");
