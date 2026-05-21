@@ -8,8 +8,10 @@ namespace SocialPlatformLibrary.Repositories;
 
 public class PhotoRepoMemory : IPhotoRepo
 {
+    // simple in memory store
     List<Photo> photos = new List<Photo>();
 
+    /// <summary>Creates and stores a new photo from the given DTO.</summary>
     public Photo CreatePhoto(PhotoDTO photo)
     {
         var newPhoto = new Photo()
@@ -28,12 +30,15 @@ public class PhotoRepoMemory : IPhotoRepo
         return photos;
     }
 
+    /// <summary>Returns the photo with the given ID, or null if not found.</summary>
     public Photo GetPhotoById(Guid id)
     {
         // Search the list for a photo with a matching ID
         return photos.FirstOrDefault(p => p.Id == id);
     }
 
+    /// <summary>Removes the photo with the given ID. 
+    /// Returns true if removed, false if not found.</summary>
     public bool RemovePhotoById(Guid id)
     {
         // Find how many items were removed. If > 0, return true.
@@ -41,6 +46,8 @@ public class PhotoRepoMemory : IPhotoRepo
         return removed > 0;
     }
 
+    /// <summary>Updates content and URL of an existing photo.
+    /// Returns null if not found.</summary>
     public Photo UpdatePhotoById(Guid id, string newContent, string newPhotoURL)
     {
         var photo = GetPhotoById(id);

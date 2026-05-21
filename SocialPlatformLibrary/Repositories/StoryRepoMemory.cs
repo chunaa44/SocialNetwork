@@ -10,8 +10,10 @@ namespace SocialPlatformLibrary.Repositories;
 
 public class StoryRepoMemory : IStoryRepo
 {
+    // simple in memory store
     List<Story> stories = new List<Story>();
 
+    /// <summary>Creates and stores a new story from the given DTO.</summary>
     public Story CreateStory(StoryDTO story)
     {
         var newStory = new Story()
@@ -28,12 +30,15 @@ public class StoryRepoMemory : IStoryRepo
         return stories;
     }
 
+    /// <summary>Returns the story with the given ID, or null if not found.</summary>
     public Story GetStoryById(Guid id)
     {
         // Search the list for a story with a matching ID
         return stories.FirstOrDefault(s => s.Id == id);
     }
 
+    /// <summary>Removes the story with the given ID. 
+    /// Returns true if removed, false if not found.</summary>
     public bool RemoveStoryById(Guid id)
     {
         // Find how many items were removed. If > 0, return true.
@@ -41,6 +46,8 @@ public class StoryRepoMemory : IStoryRepo
         return removedCount > 0;
     }
 
+    /// <summary>Updates the content of an existing story. 
+    /// Returns null if not found.</summary>
     public Story UpdateStoryById(Guid id, string newContent)
     {
         // 1. Find the existing story

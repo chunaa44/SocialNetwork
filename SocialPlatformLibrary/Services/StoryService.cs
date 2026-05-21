@@ -8,8 +8,13 @@ using SocialPlatformLibrary.Posts;
 
 namespace SocialPlatformLibrary.Services;
 
+/// <summary>
+/// Handles creation, retrieval, updates, and interactions for Story posts.
+/// Includes expiry management unique to stories.
+/// </summary>
 public class StoryService
 {
+    // Repository abstraction — swappable (memory, database, etc.)
     IStoryRepo _repo;
 
     public StoryService(IStoryRepo repo)
@@ -17,6 +22,7 @@ public class StoryService
         _repo = repo;
     }
 
+    /// <summary>Creates a new story after validating author and content.</summary>
     public Story CreateStory(StoryDTO story)
     {
         if (story == null)
@@ -29,13 +35,17 @@ public class StoryService
         return _repo.CreateStory(story);
     }
 
+    /// <summary>
+    /// Updates an existing story's content.
+    /// Returns null if not found or already expired.
+    /// </summary>
     public Story UpdateStoryById(Guid id, string newContent)
     {
         var existing = _repo.GetStoryById(id);
         if (existing == null)
             return null;
 
-        // Do not allow updating expired stories
+        // Expired stories should not be editable
         if (existing.IsExpired)
             return null;
 
@@ -47,7 +57,7 @@ public class StoryService
         return _repo.GetAllStories();
     }
 
-    // Return only non-expired stories
+    /// <summary>Returns only stories that have not yet expired.</summary>
     public List<Story> GetActiveStories()
     {
         return _repo.GetAllStories().Where(s => !s.IsExpired).ToList();
@@ -63,7 +73,7 @@ public class StoryService
         return _repo.RemoveStoryById(id);
     }
 
-    // Register a view for a story; returns true when a new unique view was added.
+    /// <summary>Records a view for a user on a story. Returns true if it was a new unique view.</summary>
     public bool AddView(Guid storyId, Guid userId)
     {
         var story = _repo.GetStoryById(storyId);
@@ -73,7 +83,7 @@ public class StoryService
         return story.AddView(userId);
     }
 
-    // toggle Like a story; throws when story missing or expired.
+    /// <summary>Toggles a like on a story. Throws if not found or expired.</summary>
     public void ToggleLikeStory(Guid storyId, Guid userId)
     {
         var story = _repo.GetStoryById(storyId);
@@ -82,9 +92,13 @@ public class StoryService
         story.ToggleLike(userId);
     }
 
-    // Remove all expired stories and return how many were removed.
+    /// <summary>
+    /// Deletes all expired stories from the repository.
+    /// Returns the number of stories removed.
+    /// </summary>
     public int RemoveExpiredStories()
     {
+        // Collect IDs first to avoid modifying the collection while iterating
         var expiredIds = _repo.GetAllStories()
                               .Where(s => s.IsExpired)
                               .Select(s => s.Id)

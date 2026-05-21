@@ -4,18 +4,24 @@ using System.Collections.Generic;
 
 namespace SocialPlatformLibrary.Posts;
 
+/// <summary>
+/// A temporary post that expires after 24 hours. Supports likes and view tracking.
+/// </summary>
 public class Story : Post, ILikable, IViewTrackable
 {
+    // All stories expire after 24 hours by default
     private static readonly TimeSpan DefaultDuration = TimeSpan.FromHours(24);
 
-    // When the story will expire (set at creation).
+    // Calculated once at construction from the post timestamp
     public DateTime ExpiresAt { get; private set; }
 
-    // Viewers tracked to avoid duplicate view counts.
+    // HashSet ensures each user is counted only once
     public HashSet<Guid> Viewers { get; } = new HashSet<Guid>();
 
+    // ViewCount is derived from Viewers so it always stays in sync 
     public int ViewCount => Viewers.Count;
 
+    // HashSet prevents duplicate likes from the same user
     public HashSet<Guid> Likes { get; } = new HashSet<Guid>();
 
     public Story()
@@ -23,11 +29,11 @@ public class Story : Post, ILikable, IViewTrackable
         ExpiresAt = Timestamp + DefaultDuration;
     }
 
-    // Whether story is expired (reads system clock).
+    // Compares against the current system clock
     public bool IsExpired => DateTime.Now > ExpiresAt;
 
 
-    // Like a story only when active.
+    /// <summary>Toggles a like. Throws if the story has expired.</summary>
     public void ToggleLike(Guid userId)
     {
         if (IsExpired)
@@ -36,14 +42,20 @@ public class Story : Post, ILikable, IViewTrackable
         else Likes.Remove(userId);
     }
 
-    // Add a view for a unique user; returns true when a new view was registered.
+    /// <summary>
+    /// Records a unique view. Returns true if this is a new viewer; 
+    /// false if the user already viewed it or the story is expired.
+    /// </summary>
     public bool AddView(Guid userId)
     {
         if (userId == Guid.Empty)
             throw new ArgumentException("Invalid user id.", nameof(userId));
+
+        // Do not count views on expired stories
         if (IsExpired)
             return false;
 
+        // HashSet.Add returns false if the element already existed
         return Viewers.Add(userId);
     }
 }

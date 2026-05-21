@@ -6,11 +6,16 @@ using System.Text;
 
 namespace SocialPlatformLibrary.Posts;
 
+/// <summary>
+/// A short video (reel) post. Supports likes and comments.
+/// </summary>
 public class Reel: Post, ILikable, ICommentable
 {
+    // HashSet prevents duplicate likes from the same user
     public HashSet<Guid> Likes { get; } = new HashSet<Guid>();
     public List<Comment> Comments { get; } = new List<Comment>();
 
+    /// <summary>Adds a like if not already liked; removes it if already liked.</summary>
     public void ToggleLike(Guid userId)
     {
         if (!Likes.Contains(userId)) Likes.Add(userId);
@@ -24,6 +29,7 @@ public class Reel: Post, ILikable, ICommentable
 
     public void RemoveCommentById(Guid commentId)
     {
+        // Find the comment by ID and remove it if it exists
         var comment = Comments.FirstOrDefault(c => c.Id == commentId);
         if(comment != null)
         {

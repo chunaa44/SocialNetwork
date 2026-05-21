@@ -6,8 +6,13 @@ using SocialPlatformLibrary.Posts;
 
 namespace SocialPlatformLibrary.Services;
 
+/// <summary>
+/// Handles creation, retrieval, updates, and interactions for Comments.
+/// Also keeps the parent post's comment list in sync.
+/// </summary>
 public class CommentService
 {
+    // Repository abstraction — swappable (memory, database, etc.)
     ICommentRepo _repo;
 
     public CommentService(ICommentRepo repo)
@@ -15,6 +20,10 @@ public class CommentService
         _repo = repo;
     }
 
+    /// <summary>
+    /// Creates a comment, saves it to the repo, and attaches it to the target post.
+    /// Both the repo and the parent post's list are updated together.
+    /// </summary>
     public Comment CreateComment(CommentDTO comment, ICommentable target)
     {
         if (comment == null)
@@ -27,10 +36,16 @@ public class CommentService
             throw new ArgumentNullException(nameof(target));
 
         var created = _repo.CreateComment(comment);
+
+        // Attach to the parent post so it shows up in post.Comments
         target.AddComment(created);
         return created;
     }
 
+    /// <summary>
+    /// Updates a comment's content.
+    /// Returns null if the comment does not exist.
+    /// </summary>
     public Comment UpdateCommentById(Guid id, string newContent)
     {
         if (id == Guid.Empty)
@@ -55,6 +70,10 @@ public class CommentService
         return _repo.GetCommentById(id);
     }
 
+    /// <summary>
+    /// Removes a comment from the repo and detaches it from the parent post.
+    /// Both the repo and the parent post's list are updated together.
+    /// </summary>
     public bool RemoveCommentById(Guid id, ICommentable target)
     {
         if (id == Guid.Empty)
@@ -62,10 +81,12 @@ public class CommentService
         if (target == null)
             throw new ArgumentNullException(nameof(target));
 
+        // Remove from parent post's list first
         target.RemoveCommentById(id);
         return _repo.RemoveCommentById(id);
     }
 
+    /// <summary>Toggles a like on a comment. Throws if the comment is not found.</summary>
     public void ToggleLikeComment(Guid commentId, Guid userId)
     {
         var comment = _repo.GetCommentById(commentId);

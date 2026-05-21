@@ -1,11 +1,20 @@
 ﻿using System;
 
-namespace SocialPlatformLibrary.Interfaces
+namespace SocialPlatformLibrary.Interfaces;
+
+/// <summary>
+/// Marks a post as view-trackable. 
+/// Any class implementing this records unique viewers.
+/// </summary>
+public interface IViewTrackable
 {
-    public interface IViewTrackable
-    {
-        HashSet<Guid> Viewers { get; }
-        // Returns true if a new unique view was recorded
-        bool AddView(Guid userId);
-    }
+    /// <summary>Set of user IDs who have viewed this post.
+    /// HashSet prevents counting the same user twice.</summary>
+    HashSet<Guid> Viewers { get; }
+
+    /// <summary>
+    /// Records a view for the given user.
+    /// Returns true if this was a new unique view; false if the user already viewed it.
+    /// </summary>
+    bool AddView(Guid userId);
 }

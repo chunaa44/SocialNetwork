@@ -6,8 +6,13 @@ using SocialPlatformLibrary.Posts;
 
 namespace SocialPlatformLibrary.Services;
 
+/// <summary>
+/// Handles user creation, updates, retrieval, and follow/unfollow logic.
+/// Validates all input before delegating to the repository.
+/// </summary>
 public class UserService
 {
+    // Repository abstraction — swappable (memory, database, etc.)
     IUserRepo _repo;
 
     public UserService(IUserRepo repo)
@@ -15,6 +20,7 @@ public class UserService
         _repo = repo;
     }
 
+    /// <summary>Creates a new user after validating name, email, and password.</summary>
     public User CreateUser(UserDTO user)
     {
         if (user == null)
@@ -27,6 +33,7 @@ public class UserService
         return _repo.CreateUser(user);
     }
 
+    /// <summary>Updates name and email of an existing user.</summary>
     public User UpdateUserById(Guid id, string name, string email)
     {
         if (id == Guid.Empty)
@@ -56,8 +63,9 @@ public class UserService
         return _repo.RemoveUserById(id);
     }
 
-    // Follow feature service methods
+    // ── Follow / Unfollow ────────────────────────────────────────────────────
 
+    /// <summary>Makes follower follow followee. Validates both users exist first.</summary>
     public bool FollowUser(Guid followerId, Guid followeeId)
     {
         if (followerId == Guid.Empty)
@@ -67,12 +75,14 @@ public class UserService
         if (followerId == followeeId)
             throw new ArgumentException("User cannot follow themselves.");
 
+        // Confirm both users actually exist before updating lists
         var follower = _repo.GetUserById(followerId) ?? throw new ArgumentException("Follower not found.", nameof(followerId));
         var followee = _repo.GetUserById(followeeId) ?? throw new ArgumentException("Followee not found.", nameof(followeeId));
 
         return _repo.FollowUser(followerId, followeeId);
     }
 
+    /// <summary>Removes the follow relationship between two users.</summary>
     public bool UnfollowUser(Guid followerId, Guid followeeId)
     {
         if (followerId == Guid.Empty)
@@ -108,6 +118,7 @@ public class UserService
         return _repo.GetFollowing(userId);
     }
 
+    // ── Private validators ───────────────────────────────────────────────────
     private static void ValidateName(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -132,7 +143,7 @@ public class UserService
             throw new ArgumentException("Password is required and cannot be empty.", nameof(password));
 
         if (password.Length < 8)
-            throw new ArgumentException("Password must be at least 8 characters long.", nameof(password));
+            throw new ArgumentException("Password must be longer than 8 characters.", nameof(password));
 
         if (password.Length > 100)
             throw new ArgumentException("Password must be less than 100 characters.", nameof(password));

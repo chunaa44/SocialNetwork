@@ -6,8 +6,12 @@ using SocialPlatformLibrary.Posts;
 
 namespace SocialPlatformLibrary.Services;
 
+/// <summary>
+/// Handles creation, retrieval, updates, and interactions for Photo posts.
+/// </summary>
 public class PhotoService
 {
+    // Repository abstraction — swappable (memory, database, etc.)
     IPhotoRepo _repo;
 
     public PhotoService(IPhotoRepo repo)
@@ -15,6 +19,7 @@ public class PhotoService
         _repo = repo;
     }
 
+    /// <summary>Creates a new photo after validating author, content, and URL.</summary>
     public Photo CreatePhoto(PhotoDTO photo)
     {
         if (photo == null)
@@ -29,6 +34,10 @@ public class PhotoService
         return _repo.CreatePhoto(photo);
     }
 
+    /// <summary>
+    /// Updates content and URL of an existing photo.
+    /// Returns null if the photo does not exist.
+    /// </summary>
     public Photo UpdatePhotoById(Guid id, string newContent, string newPhotoURL)
     {
         if (id == Guid.Empty)
@@ -38,6 +47,7 @@ public class PhotoService
         if (string.IsNullOrWhiteSpace(newPhotoURL))
             throw new ArgumentException("Photo URL cannot be empty.", nameof(newPhotoURL));
 
+        // Return null early if photo not found 
         var existing = _repo.GetPhotoById(id);
         if (existing == null)
             return null;
@@ -63,7 +73,7 @@ public class PhotoService
         return _repo.RemovePhotoById(id);
     }
 
-    // Like a photo; throws when photo missing.
+    /// <summary>Toggles a like on a photo. Throws if the photo is not found.</summary>
     public void ToggleLikePhoto(Guid photoId, Guid userId)
     {
         var photo = _repo.GetPhotoById(photoId);
@@ -72,7 +82,7 @@ public class PhotoService
         photo.ToggleLike(userId);
     }
 
-    // Bookmark a photo for a user.
+    /// <summary>Toggles a bookmark on a photo. Throws if the photo is not found.</summary>
     public void ToggleBookmarkPhoto(Guid photoId, Guid userId)
     {
         var photo = _repo.GetPhotoById(photoId);

@@ -9,6 +9,7 @@ namespace SocialPlatformLibrary.Repositories;
 
 public class UserRepoMemory : IUserRepo
 {
+    // simple in memory store
     List<User> users = new List<User>();
 
     public User CreateUser(UserDTO user)
@@ -31,6 +32,7 @@ public class UserRepoMemory : IUserRepo
 
     public User GetUserById(Guid id)
     {
+        // Returns null if not found
         return users.FirstOrDefault(u => u.Id == id);
     }
 
@@ -53,6 +55,7 @@ public class UserRepoMemory : IUserRepo
         return user;
     }
 
+    // ── Follow / Unfollow ────────────────────────────────────────────────────
     public bool FollowUser(Guid followerId, Guid followeeId)
     {
         if (followerId == Guid.Empty || followeeId == Guid.Empty)
@@ -67,6 +70,7 @@ public class UserRepoMemory : IUserRepo
         if (follower == null || followee == null)
             return false;
 
+        // Both lists must be updated atomically for consistency
         bool addedToFollowing = follower.Following.Add(followeeId);
         bool addedToFollowers = followee.Followers.Add(followerId);
 
@@ -87,6 +91,7 @@ public class UserRepoMemory : IUserRepo
         if (follower == null || followee == null)
             return false;
 
+        // Both lists must be updated atomically for consistency
         bool removedFromFollowing = follower.Following.Remove(followeeId);
         bool removedFromFollowers = followee.Followers.Remove(followerId);
 
@@ -99,6 +104,7 @@ public class UserRepoMemory : IUserRepo
         if (user == null)
             return new List<User>();
 
+        // Match users whose IDs are in this user's Followers set
         return users.Where(u => user.Followers.Contains(u.Id)).ToList();
     }
 
@@ -108,6 +114,7 @@ public class UserRepoMemory : IUserRepo
         if (user == null)
             return new List<User>();
 
+        // Match users whose IDs are in this user's Following set
         return users.Where(u => user.Following.Contains(u.Id)).ToList();
     }
 }
