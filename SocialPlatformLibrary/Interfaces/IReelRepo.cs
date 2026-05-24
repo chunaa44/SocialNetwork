@@ -19,4 +19,8 @@ public interface IReelRepo
 
     /// <summary>Returns all reels in the store.</summary>
     public List<Reel> GetAllReels();
+
+    void ToggleLike(Guid id, Guid userId);
+
+    HashSet<Guid> GetLikes(Guid id);
 }

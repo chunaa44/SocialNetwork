@@ -54,4 +54,18 @@ public class CommentRepoMemory : ICommentRepo
         comment.Content = newContent;
         return comment;
     }
+
+    public void ToggleLike(Guid commentId, Guid userId)
+    {
+        var comment = GetCommentById(commentId);
+        if (comment == null) return;
+        comment.ToggleLike(userId);
+    }
+
+    public HashSet<Guid> GetLikes(Guid commentId)
+    {
+        var comment = GetCommentById(commentId);
+        if (comment == null) return new HashSet<Guid>();
+        return comment.Likes;
+    }
 }

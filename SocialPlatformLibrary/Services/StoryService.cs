@@ -89,7 +89,14 @@ public class StoryService
         var story = _repo.GetStoryById(storyId);
         if (story == null)
             throw new KeyNotFoundException($"Story with id {storyId} not found.");
-        story.ToggleLike(userId);
+        _repo.ToggleLike(storyId, userId);
+    }
+
+    public HashSet<Guid> GetLikes(Guid storyId)
+    {
+        if (storyId == Guid.Empty)
+            throw new ArgumentException("Id must be provided.", nameof(storyId));
+        return _repo.GetLikes(storyId);
     }
 
     /// <summary>

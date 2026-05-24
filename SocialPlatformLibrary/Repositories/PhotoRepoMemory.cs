@@ -59,4 +59,18 @@ public class PhotoRepoMemory : IPhotoRepo
         photo.PhotoUrl = newPhotoURL;
         return photo;
     }
+
+    public void ToggleLike(Guid photoId, Guid userId)
+    {
+        var photo = GetPhotoById(photoId);
+        if (photo == null) return;
+        photo.ToggleLike(userId);
+    }
+
+    public HashSet<Guid> GetLikes(Guid photoId)
+    {
+        var photo = GetPhotoById(photoId);
+        if (photo == null) return new HashSet<Guid>();
+        return photo.Likes;
+    }
 }

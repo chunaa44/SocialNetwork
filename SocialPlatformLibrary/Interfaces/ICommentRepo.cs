@@ -21,4 +21,8 @@ public interface ICommentRepo
 
     /// <summary>Returns all comments in the store.</summary>
     public List<Comment> GetAllComments();
+
+    void ToggleLike(Guid id, Guid userId);
+
+    HashSet<Guid> GetLikes(Guid id);
 }

@@ -62,4 +62,18 @@ public class StoryRepoMemory : IStoryRepo
         // 3. Return the updated object
         return existingStory;
     }
+
+    public void ToggleLike(Guid storyId, Guid userId)
+    {
+        var story = GetStoryById(storyId);
+        if (story == null) return;
+        story.ToggleLike(userId);
+    }
+
+    public HashSet<Guid> GetLikes(Guid storyId)
+    {
+        var story = GetStoryById(storyId);
+        if (story == null) return new HashSet<Guid>();
+        return story.Likes;
+    }
 }

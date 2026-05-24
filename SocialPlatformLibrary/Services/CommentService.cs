@@ -92,6 +92,13 @@ public class CommentService
         var comment = _repo.GetCommentById(commentId);
         if (comment == null)
             throw new KeyNotFoundException($"Comment with id {commentId} not found.");
-        comment.ToggleLike(userId);
+        _repo.ToggleLike(commentId, userId);
+    }
+
+    public HashSet<Guid> GetLikes(Guid commentId)
+    {
+        if (commentId == Guid.Empty)
+            throw new ArgumentException("Id must be provided.", nameof(commentId));
+        return _repo.GetLikes(commentId);
     }
 }

@@ -195,6 +195,27 @@ public class Platform
     }
 
     /// <summary>
+    /// Returns likes for any post type — photo, reel, story, or comment.
+    /// </summary>
+    public HashSet<Guid> GetLikes(Guid postId)
+    {
+        var story = _storyService.GetStoryById(postId);
+        if (story != null) return _storyService.GetLikes(postId);
+
+        var reel = _reelService.GetReelById(postId);
+        if (reel != null) return _reelService.GetLikes(postId);
+
+        var photo = _photoService.GetPhotoById(postId);
+        if (photo != null) return _photoService.GetLikes(postId);
+
+        var comment = _commentService.GetCommentById(postId);
+        if (comment != null) return _commentService.GetLikes(postId);
+
+        throw new KeyNotFoundException("Post not found.");
+    }
+
+
+    /// <summary>
     /// Remove all expired stories from the platform
     /// </summary>
     /// <returns>count of how many stories are removed</returns>

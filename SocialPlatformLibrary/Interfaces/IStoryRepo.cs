@@ -23,4 +23,8 @@ public interface IStoryRepo
 
     /// <summary>Returns all stories in the store, including expired ones.</summary>
     public List<Story> GetAllStories();
+
+    void ToggleLike(Guid id, Guid userId);
+
+    HashSet<Guid> GetLikes(Guid id);
 }

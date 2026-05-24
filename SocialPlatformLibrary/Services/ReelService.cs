@@ -76,7 +76,14 @@ public class ReelService
         var reel = _repo.GetReelById(reelId);
         if (reel == null)
             throw new KeyNotFoundException($"Reel with id {reelId} not found.");
-        reel.ToggleLike(userId);
+        _repo.ToggleLike(reelId, userId);
+    }
+
+    public HashSet<Guid> GetLikes(Guid reelId)
+    {
+        if (reelId == Guid.Empty)
+            throw new ArgumentException("Id must be provided.", nameof(reelId));
+        return _repo.GetLikes(reelId);
     }
 
 }

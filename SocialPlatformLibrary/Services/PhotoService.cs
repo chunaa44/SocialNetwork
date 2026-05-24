@@ -79,7 +79,14 @@ public class PhotoService
         var photo = _repo.GetPhotoById(photoId);
         if (photo == null)
             throw new KeyNotFoundException($"Photo with id {photoId} not found.");
-        photo.ToggleLike(userId);
+        _repo.ToggleLike(photoId, userId);
+    }
+
+    public HashSet<Guid> GetLikes(Guid photoId)
+    {
+        if (photoId == Guid.Empty)
+            throw new ArgumentException("Id must be provided.", nameof(photoId));
+        return _repo.GetLikes(photoId);
     }
 
     /// <summary>Toggles a bookmark on a photo. Throws if the photo is not found.</summary>

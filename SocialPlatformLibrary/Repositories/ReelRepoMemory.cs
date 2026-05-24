@@ -54,4 +54,18 @@ public class ReelRepoMemory : IReelRepo
         reel.Content = newContent;
         return reel;
     }
+
+    public void ToggleLike(Guid reelId, Guid userId)
+    {
+        var reel = GetReelById(reelId);
+        if (reel == null) return;
+        reel.ToggleLike(userId);
+    }
+
+    public HashSet<Guid> GetLikes(Guid reelId)
+    {
+        var reel = GetReelById(reelId);
+        if (reel == null) return new HashSet<Guid>();
+        return reel.Likes;
+    }
 }

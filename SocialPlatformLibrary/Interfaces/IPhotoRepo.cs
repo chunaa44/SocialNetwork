@@ -23,4 +23,8 @@ public interface IPhotoRepo
 
     /// <summary>Returns all photos in the store.</summary>
     public List<Photo> GetAllPhotos();
+
+    void ToggleLike(Guid id, Guid userId);
+
+    HashSet<Guid> GetLikes(Guid id);
 }

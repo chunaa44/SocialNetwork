@@ -13,7 +13,7 @@ public class Story : Post, ILikable, IViewTrackable
     private static readonly TimeSpan DefaultDuration = TimeSpan.FromHours(24);
 
     // Calculated once at construction from the post timestamp
-    public DateTime ExpiresAt { get; private set; }
+    public DateTime ExpiresAt { get; init; }
 
     // HashSet ensures each user is counted only once
     public HashSet<Guid> Viewers { get; } = new HashSet<Guid>();

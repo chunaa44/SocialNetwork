@@ -11,7 +11,7 @@ namespace SocialPlatformLibrary.Posts;
 public abstract class Post 
 {
     // Unique identifier assigned at creation, never changes
-    public Guid Id { get; } = Guid.NewGuid();
+    public Guid Id { get; init; } = Guid.NewGuid();
 
     // ID of the user who created this post
     public required Guid AuthorId { get; init; }
@@ -19,5 +19,5 @@ public abstract class Post
     public required string Content { get; set; }
 
     // Recorded once at creation, never modified
-    public DateTime Timestamp { get; } = DateTime.Now;
+    public DateTime Timestamp { get; init; } = DateTime.Now;
 }
