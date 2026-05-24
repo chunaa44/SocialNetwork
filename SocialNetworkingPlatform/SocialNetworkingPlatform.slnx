@@ -1,6 +1,6 @@
 <Solution>
   <Project Path="../ReactionControl/ReactionControl.csproj" Id="2c3d0c99-5f46-4f7c-b62c-18724356300c" />
   <Project Path="../SocialPlatformLibrary/SocialPlatformLibrary.csproj" Id="fb220edf-0aa3-4429-953b-4ceb3dc20fee" />
-  <Project Path="../WinFormsApp1/WinFormsApp1.csproj" Id="dcaf1650-1fbc-4710-b3f6-c2419fdc93a5" />
+  <Project Path="../SocialNetworkingPlatformUI/SocialNetworkingPlatformUI.csproj" Id="dcaf1650-1fbc-4710-b3f6-c2419fdc93a5" />
   <Project Path="SocialNetworkingPlatform.csproj" />
 </Solution>

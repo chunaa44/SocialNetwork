@@ -12,4 +12,10 @@
     <ProjectReference Include="..\ReactionControl\ReactionControl.csproj" />
   </ItemGroup>
 
-</Project>
+  <ItemGroup>
+    <Reference Include="SocialPlatformLibrary">
+      <HintPath>..\SocialPlatformLibrary\bin\Debug\net10.0\SocialPlatformLibrary.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project> 

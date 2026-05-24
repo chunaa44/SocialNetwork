@@ -1,4 +1,4 @@
-﻿namespace WinFormsApp1
+﻿namespace SocialNetworkingPlatformUI
 {
     partial class Form1
     {
