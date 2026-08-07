@@ -9,8 +9,9 @@ namespace SocialPlatformLibrary;
 /// </summary>
 public class User
 {
-    // Unique identifier assigned at creation, never changes
-    public Guid Id { get; } = Guid.NewGuid();
+    // Unique identifier assigned at creation, never changes.
+    // init (not set) so repositories can reconstruct a User from a DB row via an object initializer.
+    public Guid Id { get; init; } = Guid.NewGuid();
 
     public required string Name { get; set; }
     public required string Email { get; set; }

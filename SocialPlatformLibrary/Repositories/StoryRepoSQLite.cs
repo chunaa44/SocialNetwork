@@ -87,11 +87,9 @@ public class StoryRepoSQLite : IStoryRepo
 
     public bool RemoveStoryById(Guid id)
     {
-        using var likesCmd = _connection.CreateCommand();
-        likesCmd.CommandText = "DELETE FROM Likes WHERE PostId = $id;";
-        likesCmd.Parameters.AddWithValue("$id", id.ToString());
-        likesCmd.ExecuteNonQuery();
-
+        // everything related to deleted entity is cleaned up by
+        // sqlite cascading deletion.
+        // simply deleting the entity is enough
         using var cmd = _connection.CreateCommand();
         cmd.CommandText = "DELETE FROM Stories WHERE Id = $id;";
         cmd.Parameters.AddWithValue("$id", id.ToString());
@@ -131,6 +129,41 @@ public class StoryRepoSQLite : IStoryRepo
             likes.Add(Guid.Parse(reader.GetString(0)));
 
         return likes;
+    }
+
+    public bool AddView(Guid storyId, Guid userId)
+    {
+        using var checkCmd = _connection.CreateCommand();
+        checkCmd.CommandText = """
+        SELECT COUNT(1) FROM Views WHERE PostId = $storyId AND UserId = $userId;
+        """;
+        checkCmd.Parameters.AddWithValue("$storyId", storyId.ToString());
+        checkCmd.Parameters.AddWithValue("$userId", userId.ToString());
+        var alreadyViewed = Convert.ToInt32(checkCmd.ExecuteScalar()) > 0;
+
+        if (alreadyViewed) return false;
+
+        using var cmd = _connection.CreateCommand();
+        cmd.CommandText = "INSERT INTO Views (PostId, UserId) VALUES ($storyId, $userId);";
+        cmd.Parameters.AddWithValue("$storyId", storyId.ToString());
+        cmd.Parameters.AddWithValue("$userId", userId.ToString());
+        cmd.ExecuteNonQuery();
+
+        return true;
+    }
+
+    public HashSet<Guid> GetViewers(Guid storyId)
+    {
+        using var cmd = _connection.CreateCommand();
+        cmd.CommandText = "SELECT UserId FROM Views WHERE PostId = $storyId;";
+        cmd.Parameters.AddWithValue("$storyId", storyId.ToString());
+
+        var viewers = new HashSet<Guid>();
+        using var reader = cmd.ExecuteReader();
+        while (reader.Read())
+            viewers.Add(Guid.Parse(reader.GetString(0)));
+
+        return viewers;
     }
 
     private static Story MapStory(SqliteDataReader reader) => new()

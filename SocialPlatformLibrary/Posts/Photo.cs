@@ -13,6 +13,10 @@ public class Photo: Post, ILikable, ICommentable, IBookmarkable
 {
     public required string PhotoUrl { get; set; }
 
+    // NOTE: Only accurate immediately after creation. Once fetched from SQLite (PhotoRepoSQLite),
+    // this is empty — Likes, Bookmarks and Comments live in the DB.
+    // Use Platform.GetLikes()/GetBookmarks() instead.
+
     // HashSet prevents duplicate likes from the same user
     public HashSet<Guid> Likes { get; } = new HashSet<Guid>();
 

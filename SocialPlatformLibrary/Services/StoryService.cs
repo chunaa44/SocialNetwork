@@ -80,7 +80,19 @@ public class StoryService
         if (story == null)
             throw new KeyNotFoundException($"Story with id {storyId} not found.");
 
-        return story.AddView(userId);
+        // Do not count views on expired stories — same rule the entity used to enforce itself
+        if (story.IsExpired)
+            return false;
+
+        return _repo.AddView(storyId, userId);
+    }
+
+    /// <summary>Returns the user IDs who have viewed a story.</summary>
+    public HashSet<Guid> GetViewers(Guid storyId)
+    {
+        if (storyId == Guid.Empty)
+            throw new ArgumentException("Id must be provided.", nameof(storyId));
+        return _repo.GetViewers(storyId);
     }
 
     /// <summary>Toggles a like on a story. Throws if not found or expired.</summary>

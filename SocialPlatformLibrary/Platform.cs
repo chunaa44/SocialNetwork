@@ -156,6 +156,13 @@ public class Platform
         _storyService.AddView(storyId, userId);
 
     /// <summary>
+    /// Get the user ids who have viewed a story
+    /// </summary>
+    /// <param name="storyId"></param>
+    /// <returns>viewers in a HashSet</returns>
+    public HashSet<Guid> GetViewers(Guid storyId) => _storyService.GetViewers(storyId);
+
+    /// <summary>
     /// Toggle like of likable post 
     /// </summary>
     /// <param name="postId"></param>
@@ -317,6 +324,13 @@ public class Platform
 
         throw new KeyNotFoundException("Entity not found");
     }
+
+    /// <summary>
+    /// Returns the user IDs who have bookmarked a photo
+    /// </summary>
+    /// <param name="photoId"></param>
+    /// <returns>bookmarks in a HashSet</returns>
+    public HashSet<Guid> GetBookmarks(Guid photoId) => _photoService.GetBookmarks(photoId);
 
     /// <summary>
     /// creates comment and attach it to it's parent post

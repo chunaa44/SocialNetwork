@@ -98,6 +98,13 @@ public class PhotoService
         if (userId == Guid.Empty)
             throw new ArgumentException("User id must be provided.", nameof(userId));
 
-        photo.ToggleBookmark(userId);
+        _repo.ToggleBookmark(photoId, userId);
+    }
+
+    public HashSet<Guid> GetBookmarks(Guid photoId)
+    {
+        if (photoId == Guid.Empty)
+            throw new ArgumentException("Id must be provided.", nameof(photoId));
+        return _repo.GetBookmarks(photoId);
     }
 }

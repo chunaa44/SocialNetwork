@@ -9,15 +9,23 @@ class Program
 {
     static void Main()
     {
-        // ── IN-MEMORY ────────────────────────────────────────────────────────
-        Console.WriteLine("=== IN-MEMORY ===\n"); 
+        using var connection = new SqliteConnection("Data Source=social.db");
+        connection.Open();
+        // enable casacding deletion so no orphan record would be created
+        using (var pragmaCmd = connection.CreateCommand())
+        {
+            pragmaCmd.CommandText = "PRAGMA foreign_keys = ON; PRAGMA recursive_triggers = ON;";
+            pragmaCmd.ExecuteNonQuery();
+        }
+
+        DbInitializer.Initialize(connection);
 
         // repos
-        var userRepo = new UserRepoMemory();
-        var photoRepo = new PhotoRepoMemory();
-        var storyRepo = new StoryRepoMemory();
-        var reelRepo = new ReelRepoMemory();
-        var commentRepo = new CommentRepoMemory();
+        var userRepo = new UserRepoSQLite(connection);
+        var photoRepo = new PhotoRepoSQLite(connection);
+        var storyRepo = new StoryRepoSQLite(connection);
+        var reelRepo = new ReelRepoSQLite(connection);
+        var commentRepo = new CommentRepoSQLite(connection);
 
         // services
         var userService = new UserService(userRepo);
@@ -26,7 +34,6 @@ class Program
         var reelService = new ReelService(reelRepo);
         var commentService = new CommentService(commentRepo);
 
-        
         var instagram = new Platform(userService, storyService, reelService, photoService, commentService);
 
         // users
@@ -56,15 +63,15 @@ class Program
         var user1_photo1 = instagram.CreatePhoto(new PhotoDTO(user1, "user1 photo1 content", "instagram.com/user1_photo1"));
 
         instagram.ToggleBookmark(user1_photo1.Id, user3.Id);
-        Console.WriteLine($"user1 photo1 bookmark count: {user1_photo1.Bookmarks.Count}");
+        Console.WriteLine($"user1 photo1 bookmark count: {instagram.GetBookmarks(user1_photo1.Id).Count}");
         instagram.ToggleBookmark(user1_photo1.Id, user3.Id);
-        Console.WriteLine($"user1 photo1 bookmark count after toggle bookmark: {user1_photo1.Bookmarks.Count}");
+        Console.WriteLine($"user1 photo1 bookmark count after toggle bookmark: {instagram.GetBookmarks(user1_photo1.Id).Count}");
 
         // comment, like
         var user1_photo1_comment1 = instagram.CreateComment(new CommentDTO(user2, "nice photo", user1_photo1.Id), user1_photo1);
         instagram.ToggleLike(user1_photo1_comment1.Id, user1.Id);
 
-        Console.WriteLine($"user1 photo1 comment1 like count: {instagram.GetCommentById(user1_photo1_comment1.Id).Likes.Count}");
+        Console.WriteLine($"user1 photo1 comment1 like count: {instagram.GetLikes(user1_photo1_comment1.Id).Count}");
 
         // story, story view, remove story
         var user3_story1 = instagram.CreateStory(new StoryDTO(user3, "user3 story1 content"));
@@ -73,88 +80,19 @@ class Program
 
         Console.WriteLine($"story count: {instagram.GetAllStories().Count}");
 
-        Console.WriteLine($"user3 story1 view count: {user3_story1.ViewCount}");
-
-
         instagram.RemoveStoryById(user3_story1.Id);
-
         Console.WriteLine($"story count after remove story: {instagram.GetAllStories().Count}");
 
-        // ── SQLITE ───────────────────────────────────────────────────────────
-        Console.WriteLine("\n=== SQLITE ===\n");
+        // reel, like
+        var user1_reel1 = instagram.CreateReel(new ReelDTO(user1, "user1 reel1 content"));
+        instagram.ToggleLike(user1_reel1.Id, user2.Id);
+        Console.WriteLine($"user1 reel1 like count: {instagram.GetLikes(user1_reel1.Id).Count}");
 
-        using var connection = new SqliteConnection("Data Source=social.db");
-        connection.Open();
-
-        DbInitializer.Initialize(connection);
-
-        // sqlite repos
-        var sqlitePhotoRepo = new PhotoRepoSQLite(connection);
-        var sqliteReelRepo = new ReelRepoSQLite(connection);
-        var sqliteStoryRepo = new StoryRepoSQLite(connection);
-        var sqliteCommentRepo = new CommentRepoSQLite(connection);
-
-        // User doesn't have a SQLite repo 
-        var sqliteUserRepo = new UserRepoMemory();
-
-        // services
-        var sqliteUserService = new UserService(sqliteUserRepo);
-        var sqlitePhotoService = new PhotoService(sqlitePhotoRepo);
-        var sqliteStoryService = new StoryService(sqliteStoryRepo);
-        var sqliteReelService = new ReelService(sqliteReelRepo);
-        var sqliteCommentService = new CommentService(sqliteCommentRepo);
-
-        var snapchat = new Platform(sqliteUserService, sqliteStoryService, 
-            sqliteReelService, sqlitePhotoService, sqliteCommentService);
-
-        var alice = snapchat.CreateUser(new UserDTO("Alice", "alice@gmail.com", "alicepass"));
-        var bob = snapchat.CreateUser(new UserDTO("Bob", "bob@gmail.com", "bobpass1"));
-
-        // Create a photo — this INSERT goes into social.db
-        var alicePhoto = snapchat.CreatePhoto(new PhotoDTO(alice, "My first photo", "snapchat.com/alice1"));
-        Console.WriteLine($"Created photo with id: {alicePhoto.Id}");
-
-        // Like the photo — this INSERT goes into the Likes table in social.db
-        snapchat.ToggleLike(alicePhoto.Id, bob.Id);
-        var likes = snapchat.GetLikes(alicePhoto.Id);
-        Console.WriteLine($"Photo like count after bob likes: {likes.Count}");
-
-        // Toggle again to unlike — this DELETE removes from Likes table
-        snapchat.ToggleLike(alicePhoto.Id, bob.Id);
-        likes = snapchat.GetLikes(alicePhoto.Id);
-        Console.WriteLine($"Photo like count after bob unlikes: {likes.Count}");
-
-        // Create a comment on the photo
-        var bobComment = snapchat.CreateComment(
-            new CommentDTO(bob, "Nice shot!", alicePhoto.Id),
-            alicePhoto);
-        Console.WriteLine($"Created comment: \"{bobComment.Content}\"");
-
-        // Like the comment
-        snapchat.ToggleLike(bobComment.Id, alice.Id);
-        var commentLikes = snapchat.GetLikes(bobComment.Id);
-        Console.WriteLine($"Comment like count: {commentLikes.Count}");
-
-        // Create a story
-        var aliceStory = snapchat.CreateStory(new StoryDTO(alice, "Story content here"));
-
-        // Create a reel
-        var aliceReel = snapchat.CreateReel(new ReelDTO(alice, "My first reel"));
-        snapchat.ToggleLike(aliceReel.Id, bob.Id);
-        var reelLikes = snapchat.GetLikes(aliceReel.Id);
-        Console.WriteLine($"Reel like count: {reelLikes.Count}");
-
-        // Fetch everything back from DB to prove it persisted
-        Console.WriteLine("\n--- Fetched from DB ---");
-        var allPhotos = snapchat.GetAllPhotos();
-        var allComments = snapchat.GetAllComments();
-        var allStories = snapchat.GetAllStories();
-        var allReels = snapchat.GetAllReels();
-        Console.WriteLine($"Photos in DB:   {allPhotos.Count}");
-        Console.WriteLine($"Comments in DB: {allComments.Count}");
-        Console.WriteLine($"Stories in DB:  {allStories.Count}");
-        Console.WriteLine($"Reels in DB:    {allReels.Count}");
-
-
+        // fetch everything back from social.db to prove it persisted
+        Console.WriteLine("\n--- Fetched from social.db ---");
+        Console.WriteLine($"Photos:   {instagram.GetAllPhotos().Count}");
+        Console.WriteLine($"Comments: {instagram.GetAllComments().Count}");
+        Console.WriteLine($"Stories:  {instagram.GetAllStories().Count}");
+        Console.WriteLine($"Reels:    {instagram.GetAllReels().Count}");
     }
 }

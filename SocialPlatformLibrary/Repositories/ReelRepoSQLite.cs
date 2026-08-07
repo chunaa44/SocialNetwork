@@ -82,11 +82,9 @@ public class ReelRepoSQLite : IReelRepo
 
     public bool RemoveReelById(Guid id)
     {
-        using var likesCmd = _connection.CreateCommand();
-        likesCmd.CommandText = "DELETE FROM Likes WHERE PostId = $id;";
-        likesCmd.Parameters.AddWithValue("$id", id.ToString());
-        likesCmd.ExecuteNonQuery();
-
+        // everything related to deleted entity is cleaned up by
+        // sqlite cascading deletion.
+        // simply deleting the entity is enough
         using var cmd = _connection.CreateCommand();
         cmd.CommandText = "DELETE FROM Reels WHERE Id = $id;";
         cmd.Parameters.AddWithValue("$id", id.ToString());

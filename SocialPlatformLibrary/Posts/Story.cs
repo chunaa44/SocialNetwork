@@ -15,6 +15,10 @@ public class Story : Post, ILikable, IViewTrackable
     // Calculated once at construction from the post timestamp
     public DateTime ExpiresAt { get; init; }
 
+    // NOTE: Only accurate immediately after creation. Once fetched from SQLite,
+    // this is empty — Views live in the DB.
+    // Use Platform methods directly instead.
+
     // HashSet ensures each user is counted only once
     public HashSet<Guid> Viewers { get; } = new HashSet<Guid>();
 

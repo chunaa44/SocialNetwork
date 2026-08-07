@@ -90,12 +90,9 @@ public class PhotoRepoSQLite : IPhotoRepo
 
     public bool RemovePhotoById(Guid id)
     {
-        // Delete likes for this post first
-        using var likesCmd = _connection.CreateCommand();
-        likesCmd.CommandText = "DELETE FROM Likes WHERE PostId = $id;";
-        likesCmd.Parameters.AddWithValue("$id", id.ToString());
-        likesCmd.ExecuteNonQuery();
-
+        // everything related to deleted entity is cleaned up by
+        // sqlite cascading deletion.
+        // simply deleting the entity is enough
         using var cmd = _connection.CreateCommand();
         cmd.CommandText = "DELETE FROM Photos WHERE Id = $id;";
         cmd.Parameters.AddWithValue("$id", id.ToString());
@@ -136,6 +133,41 @@ public class PhotoRepoSQLite : IPhotoRepo
             likes.Add(Guid.Parse(reader.GetString(0)));
 
         return likes;
+    }
+
+    public void ToggleBookmark(Guid photoId, Guid userId)
+    {
+        using var checkCmd = _connection.CreateCommand();
+        checkCmd.CommandText = """
+            SELECT COUNT(1) FROM Bookmarks WHERE PostId = $photoId AND UserId = $userId;
+            """;
+        checkCmd.Parameters.AddWithValue("$photoId", photoId.ToString());
+        checkCmd.Parameters.AddWithValue("$userId", userId.ToString());
+        var exists = Convert.ToInt32(checkCmd.ExecuteScalar()) > 0;
+
+        using var cmd = _connection.CreateCommand();
+        if (exists)
+            cmd.CommandText = "DELETE FROM Bookmarks WHERE PostId = $photoId AND UserId = $userId;";
+        else
+            cmd.CommandText = "INSERT INTO Bookmarks (PostId, UserId) VALUES ($photoId, $userId);";
+
+        cmd.Parameters.AddWithValue("$photoId", photoId.ToString());
+        cmd.Parameters.AddWithValue("$userId", userId.ToString());
+        cmd.ExecuteNonQuery();
+    }
+
+    public HashSet<Guid> GetBookmarks(Guid photoId)
+    {
+        using var cmd = _connection.CreateCommand();
+        cmd.CommandText = "SELECT UserId FROM Bookmarks WHERE PostId = $photoId;";
+        cmd.Parameters.AddWithValue("$photoId", photoId.ToString());
+
+        var bookmarks = new HashSet<Guid>();
+        using var reader = cmd.ExecuteReader();
+        while (reader.Read())
+            bookmarks.Add(Guid.Parse(reader.GetString(0)));
+
+        return bookmarks;
     }
 
     // Maps a row from the reader into a Photo object

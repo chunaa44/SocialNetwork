@@ -11,6 +11,10 @@ namespace SocialPlatformLibrary.Posts;
 /// </summary>
 public class Reel: Post, ILikable, ICommentable
 {
+    // NOTE: Only accurate immediately after creation. Once fetched from SQLite,
+    // this is empty — Likes/Comments live in the DB.
+    // Use Platform methods directly instead.
+
     // HashSet prevents duplicate likes from the same user
     public HashSet<Guid> Likes { get; } = new HashSet<Guid>();
     public List<Comment> Comments { get; } = new List<Comment>();

@@ -15,6 +15,10 @@ public class Comment: Post, ILikable
     // ID of the post  this comment belongs to
     public required Guid ParentId{ get; init; }
 
+    // NOTE: Only accurate immediately after creation. Once fetched from SQLite,
+    // this is empty — Likes live in the DB.
+    // Use Platform methods directly instead.
+
     // HashSet prevents duplicate likes from the same user
     public HashSet<Guid> Likes { get; } = new HashSet<Guid>();
 

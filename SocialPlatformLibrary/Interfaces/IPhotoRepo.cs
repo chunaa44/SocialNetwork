@@ -24,7 +24,15 @@ public interface IPhotoRepo
     /// <summary>Returns all photos in the store.</summary>
     public List<Photo> GetAllPhotos();
 
+    /// <summary>Adds a like if the user hasn't liked it yet; removes it if they already have.</summary>
     void ToggleLike(Guid id, Guid userId);
 
+    /// <summary>Returns the set of user IDs who have liked this photo. </summary>
     HashSet<Guid> GetLikes(Guid id);
+
+    /// <summary>Adds a bookmark if the user hasn't bookmarked it yet; removes it if they already have.</summary>
+    void ToggleBookmark(Guid id, Guid userId);
+
+    /// <summary>Returns the set of user IDs who have bookmarked this photo.</summary>
+    HashSet<Guid> GetBookmarks(Guid id);
 }
