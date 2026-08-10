@@ -12,9 +12,9 @@ namespace SocialPlatformLibrary.Repositories;
 public static class DbInitializer
 {
     /// <summary>
-    /// Creates Users, Follows, Photos, Reels, Stories, Comments, Likes, Bookmarks, and Views
+    /// Creates Users, Follows, Photos, Reels, Stories, Comments, Reactions, Bookmarks, and Views
     /// tables if they don't exist, wires up foreign keys, and adds cleanup triggers for the
-    /// polymorphic Likes/Comments relations so deleting a post cascades correctly.
+    /// polymorphic Reactions/Comments relations so deleting a post cascades correctly.
     /// </summary>
     /// <param name="connection">An already-opened SQLite connection.</param>
     public static void Initialize(SqliteConnection connection)
@@ -71,9 +71,10 @@ public static class DbInitializer
                 FOREIGN KEY (AuthorId) REFERENCES Users(Id) ON DELETE CASCADE
             );
 
-            CREATE TABLE IF NOT EXISTS Likes (
+            CREATE TABLE IF NOT EXISTS Reactions (
                 PostId TEXT NOT NULL,
                 UserId TEXT NOT NULL,
+                Type   TEXT NOT NULL,
                 PRIMARY KEY (PostId, UserId),
                 FOREIGN KEY (UserId) REFERENCES Users(Id) ON DELETE CASCADE
             );
@@ -94,7 +95,7 @@ public static class DbInitializer
                 FOREIGN KEY (UserId) REFERENCES Users(Id) ON DELETE CASCADE
             );
 
-            -- Likes/Comments can belong to more than one kind of post, so SQLite can't
+            -- Reactions/Comments can belong to more than one kind of post, so SQLite can't
             -- enforce a single FK for PostId/ParentId. These triggers do that cleanup
             -- instead, and they also fire when the row above was itself removed by a
             -- cascading FK delete (e.g. deleting a User cascades to Photos, which fires
@@ -102,27 +103,27 @@ public static class DbInitializer
             CREATE TRIGGER IF NOT EXISTS trg_photos_delete_cleanup
             AFTER DELETE ON Photos
             BEGIN
-                DELETE FROM Likes WHERE PostId = OLD.Id;
+                DELETE FROM Reactions WHERE PostId = OLD.Id;
                 DELETE FROM Comments WHERE ParentId = OLD.Id;
             END;
 
             CREATE TRIGGER IF NOT EXISTS trg_reels_delete_cleanup
             AFTER DELETE ON Reels
             BEGIN
-                DELETE FROM Likes WHERE PostId = OLD.Id;
+                DELETE FROM Reactions WHERE PostId = OLD.Id;
                 DELETE FROM Comments WHERE ParentId = OLD.Id;
             END;
 
             CREATE TRIGGER IF NOT EXISTS trg_stories_delete_cleanup
             AFTER DELETE ON Stories
             BEGIN
-                DELETE FROM Likes WHERE PostId = OLD.Id;
+                DELETE FROM Reactions WHERE PostId = OLD.Id;
             END;
 
             CREATE TRIGGER IF NOT EXISTS trg_comments_delete_cleanup
             AFTER DELETE ON Comments
             BEGIN
-                DELETE FROM Likes WHERE PostId = OLD.Id;
+                DELETE FROM Reactions WHERE PostId = OLD.Id;
             END;
             """;
         cmd.ExecuteNonQuery();

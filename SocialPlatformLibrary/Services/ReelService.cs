@@ -70,20 +70,20 @@ public class ReelService
         return _repo.RemoveReelById(id);
     }
 
-    /// <summary>Toggles a like on a reel. Throws if the reel is not found.</summary>
-    public void ToggleLikeReel(Guid reelId, Guid userId)
+    /// <summary>Sets a user's reaction on a reel. Throws if the reel is not found.</summary>
+    public void SetReactionReel(Guid reelId, Guid userId, ReactionType reaction)
     {
         var reel = _repo.GetReelById(reelId);
         if (reel == null)
             throw new KeyNotFoundException($"Reel with id {reelId} not found.");
-        _repo.ToggleLike(reelId, userId);
+        _repo.SetReaction(reelId, userId, reaction);
     }
 
-    public HashSet<Guid> GetLikes(Guid reelId)
+    public Dictionary<Guid, ReactionType> GetReactions(Guid reelId)
     {
         if (reelId == Guid.Empty)
             throw new ArgumentException("Id must be provided.", nameof(reelId));
-        return _repo.GetLikes(reelId);
+        return _repo.GetReactions(reelId);
     }
 
 }

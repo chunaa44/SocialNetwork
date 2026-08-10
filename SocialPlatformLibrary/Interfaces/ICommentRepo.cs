@@ -22,7 +22,10 @@ public interface ICommentRepo
     /// <summary>Returns all comments in the store.</summary>
     public List<Comment> GetAllComments();
 
-    void ToggleLike(Guid id, Guid userId);
+    /// <summary>Sets a user's reaction. Setting the same reaction the user already has
+    /// removes it (toggle off); setting a different reaction replaces it.</summary>
+    void SetReaction(Guid id, Guid userId, ReactionType reaction);
 
-    HashSet<Guid> GetLikes(Guid id);
+    /// <summary>Returns all reactions on this comment, keyed by user id.</summary>
+    Dictionary<Guid, ReactionType> GetReactions(Guid id);
 }

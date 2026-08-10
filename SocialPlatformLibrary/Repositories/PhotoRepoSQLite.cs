@@ -99,40 +99,53 @@ public class PhotoRepoSQLite : IPhotoRepo
         return cmd.ExecuteNonQuery() > 0;
     }
 
-    public void ToggleLike(Guid photoId, Guid userId)
+    public void SetReaction(Guid photoId, Guid userId, ReactionType reaction)
     {
-        // Check if like already exists
+        // Check for an existing reaction from this user so we know whether to
+        // toggle it off, replace it, or insert a new one.
         using var checkCmd = _connection.CreateCommand();
         checkCmd.CommandText = """
-            SELECT COUNT(1) FROM Likes WHERE PostId = $postId AND UserId = $userId;
+            SELECT Type FROM Reactions WHERE PostId = $postId AND UserId = $userId;
             """;
         checkCmd.Parameters.AddWithValue("$postId", photoId.ToString());
         checkCmd.Parameters.AddWithValue("$userId", userId.ToString());
-        var exists = Convert.ToInt32(checkCmd.ExecuteScalar()) > 0;
+        var existing = checkCmd.ExecuteScalar() as string;
 
         using var cmd = _connection.CreateCommand();
-        if (exists)
-            cmd.CommandText = "DELETE FROM Likes WHERE PostId = $postId AND UserId = $userId;";
+        if (existing == reaction.ToString())
+        {
+            // Same reaction again — toggle it off
+            cmd.CommandText = "DELETE FROM Reactions WHERE PostId = $postId AND UserId = $userId;";
+        }
+        else if (existing != null)
+        {
+            // Different reaction — replace it
+            cmd.CommandText = "UPDATE Reactions SET Type = $type WHERE PostId = $postId AND UserId = $userId;";
+            cmd.Parameters.AddWithValue("$type", reaction.ToString());
+        }
         else
-            cmd.CommandText = "INSERT INTO Likes (PostId, UserId) VALUES ($postId, $userId);";
+        {
+            cmd.CommandText = "INSERT INTO Reactions (PostId, UserId, Type) VALUES ($postId, $userId, $type);";
+            cmd.Parameters.AddWithValue("$type", reaction.ToString());
+        }
 
         cmd.Parameters.AddWithValue("$postId", photoId.ToString());
         cmd.Parameters.AddWithValue("$userId", userId.ToString());
         cmd.ExecuteNonQuery();
     }
 
-    public HashSet<Guid> GetLikes(Guid photoId)
+    public Dictionary<Guid, ReactionType> GetReactions(Guid photoId)
     {
         using var cmd = _connection.CreateCommand();
-        cmd.CommandText = "SELECT UserId FROM Likes WHERE PostId = $postId;";
+        cmd.CommandText = "SELECT UserId, Type FROM Reactions WHERE PostId = $postId;";
         cmd.Parameters.AddWithValue("$postId", photoId.ToString());
 
-        var likes = new HashSet<Guid>();
+        var reactions = new Dictionary<Guid, ReactionType>();
         using var reader = cmd.ExecuteReader();
         while (reader.Read())
-            likes.Add(Guid.Parse(reader.GetString(0)));
+            reactions[Guid.Parse(reader.GetString(0))] = Enum.Parse<ReactionType>(reader.GetString(1));
 
-        return likes;
+        return reactions;
     }
 
     public void ToggleBookmark(Guid photoId, Guid userId)

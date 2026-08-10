@@ -163,38 +163,41 @@ public class Platform
     public HashSet<Guid> GetViewers(Guid storyId) => _storyService.GetViewers(storyId);
 
     /// <summary>
-    /// Toggle like of likable post 
+    /// Sets a user's reaction on a reactable post (photo, reel, story, or comment).
+    /// Setting the same reaction the user already has removes it (toggle off);
+    /// setting a different reaction replaces it.
     /// </summary>
     /// <param name="postId"></param>
     /// <param name="userId"></param>
+    /// <param name="reaction"></param>
     /// <exception cref="KeyNotFoundException"></exception>
-    public void ToggleLike(Guid postId, Guid userId)
+    public void SetReaction(Guid postId, Guid userId, ReactionType reaction)
     {
         var story = _storyService.GetStoryById(postId);
         if (story != null)
         {
-            _storyService.ToggleLikeStory(postId, userId);
+            _storyService.SetReactionStory(postId, userId, reaction);
             return;
         }
 
         var reel = _reelService.GetReelById(postId);
         if (reel != null)
         {
-            _reelService.ToggleLikeReel(postId, userId);
+            _reelService.SetReactionReel(postId, userId, reaction);
             return;
         }
 
         var photo = _photoService.GetPhotoById(postId);
         if (photo != null)
         {
-            _photoService.ToggleLikePhoto(postId, userId);
+            _photoService.SetReactionPhoto(postId, userId, reaction);
             return;
         }
 
         var comment = _commentService.GetCommentById(postId);
         if (comment != null)
         {
-            _commentService.ToggleLikeComment(postId, userId);
+            _commentService.SetReactionComment(postId, userId, reaction);
             return;
         }
 
@@ -202,25 +205,24 @@ public class Platform
     }
 
     /// <summary>
-    /// Returns likes for any post type — photo, reel, story, or comment.
+    /// Returns reactions for any post type — photo, reel, story, or comment — keyed by user id.
     /// </summary>
-    public HashSet<Guid> GetLikes(Guid postId)
+    public Dictionary<Guid, ReactionType> GetReactions(Guid postId)
     {
         var story = _storyService.GetStoryById(postId);
-        if (story != null) return _storyService.GetLikes(postId);
+        if (story != null) return _storyService.GetReactions(postId);
 
         var reel = _reelService.GetReelById(postId);
-        if (reel != null) return _reelService.GetLikes(postId);
+        if (reel != null) return _reelService.GetReactions(postId);
 
         var photo = _photoService.GetPhotoById(postId);
-        if (photo != null) return _photoService.GetLikes(postId);
+        if (photo != null) return _photoService.GetReactions(postId);
 
         var comment = _commentService.GetCommentById(postId);
-        if (comment != null) return _commentService.GetLikes(postId);
+        if (comment != null) return _commentService.GetReactions(postId);
 
         throw new KeyNotFoundException("Post not found.");
     }
-
 
     /// <summary>
     /// Remove all expired stories from the platform

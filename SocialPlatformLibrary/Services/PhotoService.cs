@@ -73,20 +73,20 @@ public class PhotoService
         return _repo.RemovePhotoById(id);
     }
 
-    /// <summary>Toggles a like on a photo. Throws if the photo is not found.</summary>
-    public void ToggleLikePhoto(Guid photoId, Guid userId)
+    /// <summary>Sets a user's reaction on a photo. Throws if the photo is not found.</summary>
+    public void SetReactionPhoto(Guid photoId, Guid userId, ReactionType reaction)
     {
         var photo = _repo.GetPhotoById(photoId);
         if (photo == null)
             throw new KeyNotFoundException($"Photo with id {photoId} not found.");
-        _repo.ToggleLike(photoId, userId);
+        _repo.SetReaction(photoId, userId, reaction);
     }
 
-    public HashSet<Guid> GetLikes(Guid photoId)
+    public Dictionary<Guid, ReactionType> GetReactions(Guid photoId)
     {
         if (photoId == Guid.Empty)
             throw new ArgumentException("Id must be provided.", nameof(photoId));
-        return _repo.GetLikes(photoId);
+        return _repo.GetReactions(photoId);
     }
 
     /// <summary>Toggles a bookmark on a photo. Throws if the photo is not found.</summary>

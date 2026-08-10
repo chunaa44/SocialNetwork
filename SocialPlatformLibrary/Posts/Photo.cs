@@ -7,30 +7,34 @@ using System.Text;
 namespace SocialPlatformLibrary.Posts;
 
 /// <summary>
-/// A photo post. Supports likes, comments, and bookmarks.
+/// A photo post. Supports reacts, comments, and bookmarks.
 /// </summary>
-public class Photo: Post, ILikable, ICommentable, IBookmarkable
+public class Photo: Post, IReactable, ICommentable, IBookmarkable
 {
     public required string PhotoUrl { get; set; }
 
     // NOTE: Only accurate immediately after creation. Once fetched from SQLite (PhotoRepoSQLite),
-    // this is empty — Likes, Bookmarks and Comments live in the DB.
-    // Use Platform.GetLikes()/GetBookmarks() instead.
+    // this is empty — Reacts, Bookmarks and Comments live in the DB.
+    // Use Platform methods instead.
 
-    // HashSet prevents duplicate likes from the same user
-    public HashSet<Guid> Likes { get; } = new HashSet<Guid>();
+    // Keyed by user id — a user can hold at most one reaction at a time
+    public Dictionary<Guid, ReactionType> Reactions { get; } = new Dictionary<Guid, ReactionType>();
 
     public List<Comment> Comments { get; } = new List<Comment>();
 
     // HashSet prevents a user from bookmarking the same photo twice
     public HashSet<Guid> Bookmarks { get; } = new HashSet<Guid>();
 
-    /// <summary>Adds a like if not already liked; removes it if already liked.</summary>
-    public void ToggleLike(Guid userId)
+    /// <summary>Sets the given user's reaction. Setting the same reaction again clears it
+    /// (toggle off); setting a different reaction replaces it.</summary>
+    public void SetReaction(Guid userId, ReactionType reaction)
     {
-        if (!Likes.Contains(userId)) Likes.Add(userId);
-        else Likes.Remove(userId);
+        if (Reactions.TryGetValue(userId, out var existing) && existing == reaction)
+            Reactions.Remove(userId);
+        else
+            Reactions[userId] = reaction;
     }
+
 
     public void AddComment(Comment comment)
     { 

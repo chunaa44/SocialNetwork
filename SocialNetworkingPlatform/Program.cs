@@ -67,11 +67,11 @@ class Program
         instagram.ToggleBookmark(user1_photo1.Id, user3.Id);
         Console.WriteLine($"user1 photo1 bookmark count after toggle bookmark: {instagram.GetBookmarks(user1_photo1.Id).Count}");
 
-        // comment, like
+        // comment, reaction
         var user1_photo1_comment1 = instagram.CreateComment(new CommentDTO(user2, "nice photo", user1_photo1.Id), user1_photo1);
-        instagram.ToggleLike(user1_photo1_comment1.Id, user1.Id);
+        instagram.SetReaction(user1_photo1_comment1.Id, user1.Id, ReactionType.Love);
 
-        Console.WriteLine($"user1 photo1 comment1 like count: {instagram.GetLikes(user1_photo1_comment1.Id).Count}");
+        Console.WriteLine($"user1 photo1 comment1 reaction count: {instagram.GetReactions(user1_photo1_comment1.Id).Count}");
 
         // story, story view, remove story
         var user3_story1 = instagram.CreateStory(new StoryDTO(user3, "user3 story1 content"));
@@ -83,10 +83,10 @@ class Program
         instagram.RemoveStoryById(user3_story1.Id);
         Console.WriteLine($"story count after remove story: {instagram.GetAllStories().Count}");
 
-        // reel, like
+        // reel, reaction
         var user1_reel1 = instagram.CreateReel(new ReelDTO(user1, "user1 reel1 content"));
-        instagram.ToggleLike(user1_reel1.Id, user2.Id);
-        Console.WriteLine($"user1 reel1 like count: {instagram.GetLikes(user1_reel1.Id).Count}");
+        instagram.SetReaction(user1_reel1.Id, user2.Id, ReactionType.Haha);
+        Console.WriteLine($"user1 reel1 reaction count: {instagram.GetReactions(user1_reel1.Id).Count}");
 
         // fetch everything back from social.db to prove it persisted
         Console.WriteLine("\n--- Fetched from social.db ---");

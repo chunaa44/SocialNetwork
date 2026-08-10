@@ -86,19 +86,19 @@ public class CommentService
         return _repo.RemoveCommentById(id);
     }
 
-    /// <summary>Toggles a like on a comment. Throws if the comment is not found.</summary>
-    public void ToggleLikeComment(Guid commentId, Guid userId)
+    /// <summary>Sets a user's reaction on a comment. Throws if the comment is not found.</summary>
+    public void SetReactionComment(Guid commentId, Guid userId, ReactionType reaction)
     {
         var comment = _repo.GetCommentById(commentId);
         if (comment == null)
             throw new KeyNotFoundException($"Comment with id {commentId} not found.");
-        _repo.ToggleLike(commentId, userId);
+        _repo.SetReaction(commentId, userId, reaction);
     }
 
-    public HashSet<Guid> GetLikes(Guid commentId)
+    public Dictionary<Guid, ReactionType> GetReactions(Guid commentId)
     {
         if (commentId == Guid.Empty)
             throw new ArgumentException("Id must be provided.", nameof(commentId));
-        return _repo.GetLikes(commentId);
+        return _repo.GetReactions(commentId);
     }
 }

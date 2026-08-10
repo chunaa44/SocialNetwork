@@ -95,20 +95,20 @@ public class StoryService
         return _repo.GetViewers(storyId);
     }
 
-    /// <summary>Toggles a like on a story. Throws if not found or expired.</summary>
-    public void ToggleLikeStory(Guid storyId, Guid userId)
+    /// <summary>Sets a user's reaction on a story. Throws if not found.</summary>
+    public void SetReactionStory(Guid storyId, Guid userId, ReactionType reaction)
     {
         var story = _repo.GetStoryById(storyId);
         if (story == null)
             throw new KeyNotFoundException($"Story with id {storyId} not found.");
-        _repo.ToggleLike(storyId, userId);
+        _repo.SetReaction(storyId, userId, reaction);
     }
 
-    public HashSet<Guid> GetLikes(Guid storyId)
+    public Dictionary<Guid, ReactionType> GetReactions(Guid storyId)
     {
         if (storyId == Guid.Empty)
             throw new ArgumentException("Id must be provided.", nameof(storyId));
-        return _repo.GetLikes(storyId);
+        return _repo.GetReactions(storyId);
     }
 
     /// <summary>

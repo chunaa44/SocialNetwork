@@ -5,11 +5,10 @@ using System.Collections.Generic;
 namespace SocialPlatformLibrary.Posts;
 
 /// <summary>
-/// A temporary post that expires after 24 hours. Supports likes and view tracking.
+/// A temporary post that expires after 24 hours. Supports reactions and view tracking.
 /// </summary>
-public class Story : Post, ILikable, IViewTrackable
+public class Story : Post, IReactable, IViewTrackable
 {
-    // All stories expire after 24 hours by default
     private static readonly TimeSpan DefaultDuration = TimeSpan.FromHours(24);
 
     // Calculated once at construction from the post timestamp
@@ -25,8 +24,8 @@ public class Story : Post, ILikable, IViewTrackable
     // ViewCount is derived from Viewers so it always stays in sync 
     public int ViewCount => Viewers.Count;
 
-    // HashSet prevents duplicate likes from the same user
-    public HashSet<Guid> Likes { get; } = new HashSet<Guid>();
+    // Keyed by user id — a user can hold at most one reaction at a time
+    public Dictionary<Guid, ReactionType> Reactions { get; } = new();
 
     public Story()
     {
@@ -37,13 +36,16 @@ public class Story : Post, ILikable, IViewTrackable
     public bool IsExpired => DateTime.Now > ExpiresAt;
 
 
-    /// <summary>Toggles a like. Throws if the story has expired.</summary>
-    public void ToggleLike(Guid userId)
+    /// <summary>Sets the given user's reaction. Setting the same reaction again clears it
+    /// (toggle off); setting a different reaction replaces it. Throws if the story has expired.</summary>
+    public void SetReaction(Guid userId, ReactionType reaction)
     {
         if (IsExpired)
-            throw new InvalidOperationException("Cannot like an expired story.");
-        if (!Likes.Contains(userId)) Likes.Add(userId);
-        else Likes.Remove(userId);
+            throw new InvalidOperationException("Cannot react to an expired story.");
+        if (Reactions.TryGetValue(userId, out var existing) && existing == reaction)
+            Reactions.Remove(userId);
+        else
+            Reactions[userId] = reaction;
     }
 
     /// <summary>

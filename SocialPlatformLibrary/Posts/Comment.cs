@@ -7,26 +7,29 @@ using System.Text;
 namespace SocialPlatformLibrary.Posts;
 
 /// <summary>
-/// A comment attached to a parent post (Photo, Reel, or another Comment).
-/// Supports likes.
+/// A comment attached to a parent post.
+/// Supports reactions.
 /// </summary>
-public class Comment: Post, ILikable
+public class Comment : Post, IReactable
 {
     // ID of the post  this comment belongs to
-    public required Guid ParentId{ get; init; }
+    public required Guid ParentId { get; init; }
 
     // NOTE: Only accurate immediately after creation. Once fetched from SQLite,
-    // this is empty — Likes live in the DB.
+    // this is empty — Reactions live in the DB.
     // Use Platform methods directly instead.
 
-    // HashSet prevents duplicate likes from the same user
-    public HashSet<Guid> Likes { get; } = new HashSet<Guid>();
+    // Keyed by user id — a user can hold at most one reaction at a time
+    public Dictionary<Guid, ReactionType> Reactions { get; } = new();
 
-    /// <summary>Adds a like if not already liked; removes it if already liked.</summary>
-    public void ToggleLike(Guid userId)
+    /// <summary>Sets the given user's reaction. Setting the same reaction again clears it
+    /// (toggle off); setting a different reaction replaces it.</summary>
+    public void SetReaction(Guid userId, ReactionType reaction)
     {
-        if (!Likes.Contains(userId)) Likes.Add(userId);
-        else Likes.Remove(userId);
+        if (Reactions.TryGetValue(userId, out var existing) && existing == reaction)
+            Reactions.Remove(userId);
+        else
+            Reactions[userId] = reaction;
     }
 
 }

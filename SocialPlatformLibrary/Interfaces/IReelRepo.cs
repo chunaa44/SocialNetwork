@@ -20,7 +20,10 @@ public interface IReelRepo
     /// <summary>Returns all reels in the store.</summary>
     public List<Reel> GetAllReels();
 
-    void ToggleLike(Guid id, Guid userId);
+    /// <summary>Sets a user's reaction. Setting the same reaction the user already has
+    /// removes it (toggle off); setting a different reaction replaces it.</summary>
+    void SetReaction(Guid id, Guid userId, ReactionType reaction);
 
-    HashSet<Guid> GetLikes(Guid id);
+    /// <summary>Returns all reactions on this reel, keyed by user id.</summary>
+    Dictionary<Guid, ReactionType> GetReactions(Guid id);
 }
