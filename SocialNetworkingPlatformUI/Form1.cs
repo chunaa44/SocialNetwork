@@ -1,3 +1,4 @@
+using Microsoft.Data.Sqlite;
 using ReactionControl;
 using SocialPlatformLibrary;
 using SocialPlatformLibrary.DTO;
@@ -19,12 +20,21 @@ public partial class Form1 : Form
     {
         InitializeComponent();
 
+        var connection = new SqliteConnection("Data Source=social_ui.db");
+        connection.Open();
+        using (var pragmaCmd = connection.CreateCommand())
+        {
+            pragmaCmd.CommandText = "PRAGMA foreign_keys = ON; PRAGMA recursive_triggers = ON;";
+            pragmaCmd.ExecuteNonQuery();
+        }
+        DbInitializer.Initialize(connection);
+
         // repos
-        var userRepo = new UserRepoMemory();
-        var photoRepo = new PhotoRepoMemory();
-        var storyRepo = new StoryRepoMemory();
-        var reelRepo = new ReelRepoMemory();
-        var commentRepo = new CommentRepoMemory();
+        var userRepo = new UserRepoSQLite(connection);
+        var photoRepo = new PhotoRepoSQLite(connection);
+        var storyRepo = new StoryRepoSQLite(connection);
+        var reelRepo = new ReelRepoSQLite(connection);
+        var commentRepo = new CommentRepoSQLite(connection);
 
         // services
         var userService = new UserService(userRepo);
@@ -46,34 +56,44 @@ public partial class Form1 : Form
         // label
         photoLabel = new Label();
         photoLabel.Location = new Point(100, 50);
-        photoLabel.Size = new Size(300, 20);
-        photoLabel.Text = $"{photo.Content}";
+        photoLabel.AutoSize = true;
+        UpdatePhotoLabel();
         this.Controls.Add(photoLabel);
 
-        // alice like button
-        LikeControl aliceLike = new LikeControl();
-        aliceLike.Location = new Point(100, 100);
-        aliceLike.Tag = alice;
-        aliceLike.LikeChanged += Like_LikeChanged;
-        this.Controls.Add(aliceLike);
+        // alice's reaction picker
+        var aliceLabel = new Label { Text = "Alice:", Location = new Point(20, 100), AutoSize = true };
+        var alicePicker = new ReactionPicker();
+        alicePicker.Location = new Point(100, 95);
+        alicePicker.Tag = alice;
+        alicePicker.ReactionSelected += ReactionPicker_ReactionSelected;
+        this.Controls.Add(aliceLabel);
+        this.Controls.Add(alicePicker);
 
-        // bob like button
-        LikeControl bobLike = new LikeControl();
-        bobLike.Location = new Point(160, 100);
-        bobLike.Tag = bob;
-        bobLike.LikeChanged += Like_LikeChanged;
-        this.Controls.Add(bobLike);
-
-
+        // bob's reaction picker
+        var bobLabel = new Label { Text = "Bob:", Location = new Point(20, 140), AutoSize = true };
+        var bobPicker = new ReactionPicker();
+        bobPicker.Location = new Point(100, 135);
+        bobPicker.Tag = bob;
+        bobPicker.ReactionSelected += ReactionPicker_ReactionSelected;
+        this.Controls.Add(bobLabel);
+        this.Controls.Add(bobPicker);
     }
 
-    private void Like_LikeChanged(object sender, EventArgs e)
+    private void ReactionPicker_ReactionSelected(object? sender, ReactionType reaction)
     {
-        LikeControl lc = (LikeControl)sender;
-        User user = (User)lc.Tag;
+        var picker = (ReactionPicker)sender!;
+        var user = (User)picker.Tag!;
 
-        instagram.ToggleLike(photo.Id, user.Id);
+        instagram.SetReaction(photo.Id, user.Id, reaction);
 
-        photoLabel.Text = $"{photo.Content} - {photo.Likes.Count} likes";
+        var reactions = instagram.GetReactions(photo.Id);
+        picker.CurrentReaction = reactions.TryGetValue(user.Id, out var r) ? r : null;
+
+        UpdatePhotoLabel();
+    }
+
+    private void UpdatePhotoLabel()
+    {
+        photoLabel.Text = $"{photo.Content} - {instagram.GetReactions(photo.Id).Count} reactions";
     }
 }

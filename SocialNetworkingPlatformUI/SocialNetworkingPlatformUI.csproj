@@ -1,21 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
-    <UseWindowsForms>true</UseWindowsForms>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net10.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<UseWindowsForms>true</UseWindowsForms>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\ReactionControl\ReactionControl.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\ReactionControl\ReactionControl.csproj" />
+		<ProjectReference Include="..\SocialPlatformLibrary\SocialPlatformLibrary.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="SocialPlatformLibrary">
-      <HintPath>..\SocialPlatformLibrary\bin\Debug\net10.0\SocialPlatformLibrary.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-</Project> 
+</Project>
