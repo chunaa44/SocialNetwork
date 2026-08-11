@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../TestImageProcessorLibrary/TestImageProcessorLibrary.csproj" Id="debc89c8-af8a-4a2c-9739-54e0d873b0aa" />
+  <Project Path="ImageProcessorLibrary.csproj" />
+</Solution>
