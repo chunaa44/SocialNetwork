@@ -33,6 +33,27 @@ public class UserService
         return _repo.CreateUser(user);
     }
 
+    /// <summary>Returns the user with the given email, or null if not found.</summary>
+    public User? GetUserByEmail(string email)
+    {
+        ValidateEmail(email);
+
+        return _repo.GetUserByEmail(email);
+    }
+
+    /// <summary>Verifies email and password, returning the matching user, or null if the credentials are invalid.</summary>
+    public User? Login(string email, string password)
+    {
+        ValidateEmail(email);
+        ValidatePassword(password);
+
+        var user = _repo.GetUserByEmail(email);
+        if (user == null || user.Password != password)
+            return null;
+
+        return user;
+    }
+
     /// <summary>Updates name and email of an existing user.</summary>
     public User UpdateUserById(Guid id, string name, string email)
     {

@@ -20,6 +20,9 @@ public interface IUserRepo
     /// <summary>Returns the user with the given ID, or null if not found.</summary>
     User GetUserById(Guid id);
 
+    /// <summary>Returns the user with the given email (case-insensitive), or null if not found.</summary>
+    User? GetUserByEmail(string email);
+
     /// <summary>Returns all users in the store.</summary>
     List<User> GetAllUsers();
 

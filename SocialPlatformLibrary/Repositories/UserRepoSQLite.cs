@@ -54,6 +54,18 @@ public class UserRepoSQLite : IUserRepo
         return MapUser(reader);
     }
 
+    public User? GetUserByEmail(string email)
+    {
+        using var cmd = _connection.CreateCommand();
+        cmd.CommandText = "SELECT Id, Name, Email, Password FROM Users WHERE Email = $email COLLATE NOCASE;";
+        cmd.Parameters.AddWithValue("$email", email);
+
+        using var reader = cmd.ExecuteReader();
+        if (!reader.Read()) return null;
+
+        return MapUser(reader);
+    }
+
     public List<User> GetAllUsers()
     {
         using var cmd = _connection.CreateCommand();

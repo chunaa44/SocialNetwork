@@ -28,6 +28,9 @@ public static class DbInitializer
                 Password TEXT NOT NULL
             );
 
+            -- DB-level guard so two accounts can't share an email (case-insensitive).
+            CREATE UNIQUE INDEX IF NOT EXISTS IX_Users_Email ON Users(Email COLLATE NOCASE);
+
             CREATE TABLE IF NOT EXISTS Follows (
                 FollowerId TEXT NOT NULL,
                 FolloweeId TEXT NOT NULL,

@@ -53,6 +53,21 @@ public class Platform
     public User GetUserById(Guid id) => _userService.GetUserById(id);
 
     /// <summary>
+    /// Get a User by email
+    /// </summary>
+    /// <param name="email"></param>
+    /// <returns>User, or null if not found</returns>
+    public User? GetUserByEmail(string email) => _userService.GetUserByEmail(email);
+
+    /// <summary>
+    /// Verifies email and password against a stored User
+    /// </summary>
+    /// <param name="email"></param>
+    /// <param name="password"></param>
+    /// <returns>The matching User, or null if the credentials are invalid</returns>
+    public User? Login(string email, string password) => _userService.Login(email, password);
+
+    /// <summary>
     /// Update User's name and email
     /// </summary>
     /// <param name="id"></param>
