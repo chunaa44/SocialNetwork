@@ -1,20 +1,18 @@
 using Microsoft.Data.Sqlite;
-using ReactionControl;
 using SocialPlatformLibrary;
-using SocialPlatformLibrary.DTO;
-using SocialPlatformLibrary.Posts;
 using SocialPlatformLibrary.Repositories;
 using SocialPlatformLibrary.Services;
 
 namespace SocialNetworkingPlatformUI;
 
+/// <summary>
+/// Main application window. Owns the SQLite connection and the Platform
+/// facade, and swaps between sign-in, sign-up, and the feed panel — the
+/// rest of the UI never touches SQLite directly, only Platform.
+/// </summary>
 public partial class Form1 : Form
 {
-    private readonly Platform instagram;
-    private readonly Photo photo;
-    private readonly User bob;
-    private readonly User alice;
-    private readonly Label photoLabel;
+    private readonly Platform _platform;
 
     public Form1()
     {
@@ -27,73 +25,48 @@ public partial class Form1 : Form
             pragmaCmd.CommandText = "PRAGMA foreign_keys = ON; PRAGMA recursive_triggers = ON;";
             pragmaCmd.ExecuteNonQuery();
         }
-        DbInitializer.Initialize(connection);
+        DbInitializer.Initialize(connection); 
 
-        // repos
+        // repos 
         var userRepo = new UserRepoSQLite(connection);
         var photoRepo = new PhotoRepoSQLite(connection);
         var storyRepo = new StoryRepoSQLite(connection);
         var reelRepo = new ReelRepoSQLite(connection);
         var commentRepo = new CommentRepoSQLite(connection);
 
-        // services
+        // services 
         var userService = new UserService(userRepo);
         var photoService = new PhotoService(photoRepo);
         var storyService = new StoryService(storyRepo);
         var reelService = new ReelService(reelRepo);
         var commentService = new CommentService(commentRepo);
 
-        // platform
-        instagram = new Platform(userService, storyService, reelService, photoService, commentService);
+        // Platform is the single facade every panel below talks to.
+        _platform = new Platform(userService, storyService, reelService, photoService, commentService);
 
-        // users
-        alice = instagram.CreateUser(new UserDTO("Alice", "alice@example.com", "password123"));
-        bob = instagram.CreateUser(new UserDTO("Bob", "bob@example.com", "password123"));
-
-        // photo
-        photo = instagram.CreatePhoto(new PhotoDTO(alice, "Lovely sunset", "https://example.com/sunset.jpg"));
-
-        // label
-        photoLabel = new Label();
-        photoLabel.Location = new Point(100, 50);
-        photoLabel.AutoSize = true;
-        UpdatePhotoLabel();
-        this.Controls.Add(photoLabel);
-
-        // alice's reaction picker
-        var aliceLabel = new Label { Text = "Alice:", Location = new Point(20, 100), AutoSize = true };
-        var alicePicker = new ReactionPicker();
-        alicePicker.Location = new Point(100, 95);
-        alicePicker.Tag = alice;
-        alicePicker.ReactionSelected += ReactionPicker_ReactionSelected;
-        this.Controls.Add(aliceLabel);
-        this.Controls.Add(alicePicker);
-
-        // bob's reaction picker
-        var bobLabel = new Label { Text = "Bob:", Location = new Point(20, 140), AutoSize = true };
-        var bobPicker = new ReactionPicker();
-        bobPicker.Location = new Point(100, 135);
-        bobPicker.Tag = bob;
-        bobPicker.ReactionSelected += ReactionPicker_ReactionSelected;
-        this.Controls.Add(bobLabel);
-        this.Controls.Add(bobPicker);
+        ShowSignIn(); // start on the sign-in screen
     }
 
-    private void ReactionPicker_ReactionSelected(object? sender, ReactionType reaction)
+    private void ShowSignIn()
     {
-        var picker = (ReactionPicker)sender!;
-        var user = (User)picker.Tag!;
-
-        instagram.SetReaction(photo.Id, user.Id, reaction);
-
-        var reactions = instagram.GetReactions(photo.Id);
-        picker.CurrentReaction = reactions.TryGetValue(user.Id, out var r) ? r : null;
-
-        UpdatePhotoLabel();
+        Controls.Clear();
+        var panel = new SignInPanel(_platform, OnAuthenticated, onSwitchToSignUp: ShowSignUp) { Dock = DockStyle.Fill };
+        Controls.Add(panel);
     }
 
-    private void UpdatePhotoLabel()
+    private void ShowSignUp()
     {
-        photoLabel.Text = $"{photo.Content} - {instagram.GetReactions(photo.Id).Count} reactions";
+        Controls.Clear();
+        var panel = new SignUpPanel(_platform, OnAuthenticated, onSwitchToSignIn: ShowSignIn) { Dock = DockStyle.Fill };
+        Controls.Add(panel);
+    }
+
+    // Called by either panel once Platform confirms a valid user (login
+    // succeeded or signup created a new account) — moves on to the feed.
+    private void OnAuthenticated(User user)
+    {
+        Controls.Clear();
+        var feedPanel = new FeedPanel(_platform, user, onLogout: ShowSignIn) { Dock = DockStyle.Fill };
+        Controls.Add(feedPanel);
     }
 }

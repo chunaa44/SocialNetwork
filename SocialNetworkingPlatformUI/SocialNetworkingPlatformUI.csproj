@@ -9,6 +9,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\ImageProcessorLibrary\ImageProcessorLibrary.csproj" />
 		<ProjectReference Include="..\ReactionControl\ReactionControl.csproj" />
 		<ProjectReference Include="..\SocialPlatformLibrary\SocialPlatformLibrary.csproj" />
 	</ItemGroup>
