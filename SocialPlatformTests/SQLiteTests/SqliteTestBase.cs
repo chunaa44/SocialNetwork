@@ -2,7 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SocialPlatformLibrary.Repositories;
 
-namespace SocialPlatformTests;
+namespace SocialPlatformTests.SQLiteTests;
 
 /// <summary>
 /// Opens a shared in-memory SQLite connection for each test class
